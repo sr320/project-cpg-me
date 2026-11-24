@@ -155,6 +155,17 @@ def _merge_goslim(new: dict, old: dict, species: list[dict]) -> dict:
                 tidx[term["name"]] = len(tgt["terms"])
                 tgt["terms"].append(term)
             tgt["cells"].append([tidx[term["name"]], pos[acc], *rest])
+    # Rows are ordered by mean shift across species, as in goslim_terms().
+    for block in new.values():
+        shift = defaultdict(list)
+        for ti, _, sh, *_ in block["cells"]:
+            if sh is not None:
+                shift[ti].append(sh)
+        order = sorted(range(len(block["terms"])),
+                       key=lambda i: np.mean(shift[i]) if shift[i] else np.inf)
+        remap = {old_i: new_i for new_i, old_i in enumerate(order)}
+        block["terms"] = [block["terms"][i] for i in order]
+        block["cells"] = [[remap[c[0]], *c[1:]] for c in block["cells"]]
     return new
 
 
