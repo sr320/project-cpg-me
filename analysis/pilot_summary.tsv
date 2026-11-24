@@ -26,12 +26,14 @@ bivalve	Ostrea edulis	GCF_947568905.1	upstream	27699	0.7961	False	False	-218.9	1
 bivalve	Pecten maximus	GCF_902652985.1	cds	25959	0.6759	False	False	-93.65	1.931	0.4603	0.4232	0.8227	0.6131	0.8037
 bivalve	Pecten maximus	GCF_902652985.1	gene_body	26123	0.6576	True	True	2694	2.89	0.4088	0.4449	0.8477	0.5958	0.8322
 bivalve	Pecten maximus	GCF_902652985.1	upstream	25791	0.8614	False	True	988.9	0.5641	0.7345	0.3562	0.9014		0.9007
+hemiptera	Cyrpoptus belfragei	GCWQ01000000	cds	14361	0.5297	False	True	3743	1.484	0.4804	0.7429	0.9391	0.835	0.9954
 hemiptera	Laodelphax striatellus	GCA_003335185.2	cds	15487	0.7993	False	False	-44.45	1.085	0.6849	0.4522	0.885	0.7379	1.03
 hemiptera	Laodelphax striatellus	GCA_003335185.2	gene_body	16222	0.7401	False	True	3685	0.1066	0.7376	0.6831	0.7566		1.026
 hemiptera	Laodelphax striatellus	GCA_003335185.2	upstream	15947	0.7316	False	False	-91.53	1.272	0.6349	0.5492	0.8637	0.7846	1.016
 hemiptera	Lycorma delicatula	GCF_047948215.1	cds	13877	0.5115	False	True	3935	1.808	0.4553	0.7212	0.9048	0.7425	1.011
 hemiptera	Lycorma delicatula	GCF_047948215.1	gene_body	14197	0.5311	True	True	7043	2.431	0.4133	0.5051	0.8834	0.5689	1.059
 hemiptera	Lycorma delicatula	GCF_047948215.1	upstream	14198	0.8898	False	False	-39.29	1.618	0.5965	0.4327	1.102	0.8059	1.075
+hemiptera	Lycorma delicatula	GFES01000000	cds	8223	0.472	False	True	2251	1.587	0.4357	0.7826	0.8592	0.7615	1.029
 hemiptera	Macrosteles quadrilineatus	GCF_028750875.1	cds	21708	0.6152	False	True	1816	0.4993	0.5925	0.6561	0.6902		0.8766
 hemiptera	Macrosteles quadrilineatus	GCF_028750875.1	gene_body	21975	0.7003	False	True	3191	0.2283	0.6961	0.7753	0.7388		0.9994
 hemiptera	Macrosteles quadrilineatus	GCF_028750875.1	upstream	21910	0.7754	False	False	-116.9	1.369	0.6439	0.5214	0.9281	0.8052	1.01

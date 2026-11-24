@@ -1,5 +1,6 @@
 # Pilot manifest. One row per assembly. genome_features=yes downloads the genome for gene-body/upstream features.
-# role: focal | control_methylated | control_unmethylated
+# role: focal | control_methylated | control_unmethylated | tier_check (same species as a genome row, other tier)
+# tier: genome_annotation (accession GCF_/GCA_) | tsa (TSA project accession like GCWQ01000000; CDS only, longest ORF per contig)
 group	species	taxid	accession	tier	genome_features	role	notes
 coral	Acropora millepora	45264	GCF_013753865.1	genome_annotation	yes	focal	genus used in Dimond & Roberts 2015
 coral	Stylophora pistillata	50429	GCF_964205215.1	genome_annotation	yes	focal	published WGBS for validation
@@ -14,6 +15,8 @@ hemiptera	Lycorma delicatula	130591	GCF_047948215.1	genome_annotation	yes	focal	
 hemiptera	Nilaparvata lugens	108931	GCF_014356525.2	genome_annotation	yes	focal	brown planthopper; non-invasive contrast for Lycorma; published WGBS
 hemiptera	Laodelphax striatellus	195883	GCA_003335185.2	genome_annotation	yes	focal	small brown planthopper (Delphacidae); native Eurasian rice pest, not listed as invasive; GenBank annotation
 hemiptera	Macrosteles quadrilineatus	74068	GCF_028750875.1	genome_annotation	yes	focal	aster leafhopper (Cicadellidae); native to North America, not invasive
+hemiptera	Cyrpoptus belfragei	1464866	GCWQ01000000	tsa	no	focal	Fulgoridae (Lystrinae); native to the US, not invasive; whole-adult transcriptome (Johnson et al. 2018), CDS only
+hemiptera	Lycorma delicatula	130591	GFES01000000	tsa	no	tier_check	same 1KITE pipeline and assembler as Cyrpoptus; checks TSA CDS against the Lycorma genome row
 tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	
 tunicate	Styela clava	7725	GCF_964204865.1	genome_annotation	yes	focal	invasive marine tunicate
 seastar	Acanthaster planci	133434	GCF_054643075.1	genome_annotation	yes	focal	crown-of-thorns; outbreak species

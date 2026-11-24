@@ -91,7 +91,8 @@
     const nVal = d.species.reduce((a, s) => a + (s.validation?.length || 0), 0);
     const ctl = d.species.find((s) => s.role === "control_unmethylated");
     const tiles = [
-      ["Species analysed", `${d.species.length}`, `${focal.length} focal, ${d.species.length - focal.length} controls`],
+      ["Species analysed", `${d.species.length}`, `${focal.length} focal, ${d.species.filter((s) => s.role.startsWith("control")).length} controls` +
+        (d.species.some((s) => s.role === "tier_check") ? `, ${d.species.filter((s) => s.role === "tier_check").length} tier check` : "")],
       ["Bimodal in gene bodies", `${bimodalGB.length}`, `of ${withGB.length} focal species`, `/ ${withGB.length}`],
       ["Housekeeping genes lower", `${supports.length}`, ctl && ctl.goslim_test ? `of ${tested.length} focal; ${ctl.organism} control: ${ctl.goslim_test[bestFeature(ctl)]?.supports_2015 ? "yes" : "no gap"}` : `of ${tested.length} focal species`, `/ ${tested.length}`],
       ["WGBS validation datasets", `${nVal}`, nVal ? "gene methylation vs CpG O/E" : "alignments running"],
@@ -109,6 +110,8 @@
   }
 
   // ---------- species table ----------
+  const ROLE_LABEL = { control_methylated: "methylated control", control_unmethylated: "unmethylated control",
+    tier_check: "transcriptome check" };
   const COLS = [
     { key: "group", label: "Group", get: (s) => s.group, cls: "grp" },
     { key: "organism", label: "Species", get: (s) => s.organism, cls: "sp" },
@@ -168,7 +171,10 @@
           td.textContent = c.show ? c.show(v, s) : v ?? "–";
         }
         if (c.key === "organism" && s.role !== "focal") {
-          td.append(" ", el("span", { class: "chip ctl" }, s.role === "control_methylated" ? "methylated control" : "unmethylated control"));
+          td.append(" ", el("span", { class: "chip ctl" }, ROLE_LABEL[s.role] || s.role));
+        }
+        if (c.key === "organism" && s.tier === "tsa") {
+          td.append(" ", el("span", { class: "chip ctl" }, "transcriptome, CDS only"));
         }
         tr.append(td);
       }
@@ -426,7 +432,7 @@
       state.data = d;
       renderMeta(d);
       const sel = $("species-select");
-      for (const s of d.species) sel.append(el("option", { value: s.accession }, `${s.organism} (${s.group})`));
+      for (const s of d.species) sel.append(el("option", { value: s.accession }, `${s.organism} (${s.group}${s.tier === "tsa" ? ", transcriptome" : ""})`));
       sel.addEventListener("change", () => selectSpecies(sel.value, false));
       state.species = d.species[0].accession;
       sel.value = state.species;

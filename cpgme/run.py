@@ -25,6 +25,7 @@ from .compute import count
 from .features import genomic_features, longest_cds, protein_coding_genes
 from .fetch import _md5, assembly_report, fetch
 from .fit import fit_distribution
+from .tsa import fetch_tsa, is_tsa, master_info, tsa_cds
 
 MIN_LENGTH = 300
 MAX_FRAC_AMBIG = 0.05
@@ -44,7 +45,7 @@ def _code_hash() -> str:
     """Hash of the modules that determine output values, so results are invalidated when
     the computation changes (but not when only downloading or the CLI changes)."""
     h = hashlib.sha256()
-    for name in ("compute.py", "features.py", "fit.py", "run.py", "seqio.py"):
+    for name in ("compute.py", "features.py", "fit.py", "run.py", "seqio.py", "tsa.py"):
         h.update((Path(__file__).parent / name).read_bytes())
     return h.hexdigest()[:12]
 
@@ -54,6 +55,8 @@ def is_done(outdir: Path, genome: bool) -> bool:
     if not prov.exists():
         return False
     p = json.loads(prov.read_text())
+    if is_tsa(outdir.name):
+        genome = False  # a transcriptome has no genome features
     return p.get("code_hash") == _code_hash() and p.get("genome_features") == genome
 
 
@@ -65,17 +68,37 @@ def run(accession: str, results_dir: Path, data_dir: Path, genome: bool = False,
         return outdir
     outdir.mkdir(parents=True, exist_ok=True)
     started = dt.datetime.now(dt.timezone.utc)
-
-    log(f"{accession}: assembly report")
-    report = assembly_report(accession)
-    log(f"{accession}: fetching ({'with' if genome else 'without'} genome)")
-    files = fetch(accession, Path(data_dir) / accession, genome=genome)
+    tsa = is_tsa(accession)
 
     rows: list[dict] = []
-    log(f"{accession}: longest CDS per gene")
-    cds = longest_cds(files["CDS_FASTA"])
-    for gid, rec in cds.items():
-        rows.append(_row(gid, rec["gene"], "cds", count(rec["seq"])))
+    if tsa:
+        if genome:
+            log(f"{accession}: transcriptome; no gene-body or upstream features")
+            genome = False
+        log(f"{accession}: fetching TSA contigs")
+        files = fetch_tsa(accession, Path(data_dir) / accession)
+        info = master_info(files["TSA_MASTER"])
+        organism, taxid = info["organism"], info["taxid"]
+        log(f"{accession}: longest ORF per contig")
+        for contig, rec in tsa_cds(files["TSA_FASTA"]).items():
+            rows.append(_row(f"tsa:{contig}", "", "cds", count(rec["seq"])))
+        tier = {"source_tier": "tsa", "assembly_name": info["assembly_name"],
+                "annotation": f"longest ORF per contig (cpgme.tsa); "
+                              f"assembled with {info['assembly_method']}"}
+    else:
+        log(f"{accession}: assembly report")
+        report = assembly_report(accession)
+        organism = report["organism"]["organism_name"]
+        taxid = report["organism"]["tax_id"]
+        log(f"{accession}: fetching ({'with' if genome else 'without'} genome)")
+        files = fetch(accession, Path(data_dir) / accession, genome=genome)
+        log(f"{accession}: longest CDS per gene")
+        cds = longest_cds(files["CDS_FASTA"])
+        for gid, rec in cds.items():
+            rows.append(_row(gid, rec["gene"], "cds", count(rec["seq"])))
+        tier = {"source_tier": "genome_annotation",
+                "assembly_name": report.get("assembly_info", {}).get("assembly_name"),
+                "annotation": report.get("annotation_info", {}).get("name")}
 
     if genome:
         log(f"{accession}: gene bodies and upstream regions")
@@ -86,8 +109,8 @@ def run(accession: str, results_dir: Path, data_dir: Path, genome: bool = False,
 
     log(f"{accession}: fitting mixtures")
     summary = {"accession": accession,
-               "organism": report["organism"]["organism_name"],
-               "taxid": report["organism"]["tax_id"],
+               "organism": organism,
+               "taxid": taxid,
                "filters": {"min_length": MIN_LENGTH, "max_frac_ambig": MAX_FRAC_AMBIG},
                "features": {}}
     for feature in sorted({r["feature"] for r in rows}):
@@ -112,9 +135,7 @@ def run(accession: str, results_dir: Path, data_dir: Path, genome: bool = False,
     provenance = {
         "accession": accession,
         "organism": summary["organism"],
-        "source_tier": "genome_annotation",
-        "assembly_name": report.get("assembly_info", {}).get("assembly_name"),
-        "annotation": report.get("annotation_info", {}).get("name"),
+        **tier,
         "genome_features": genome,
         "cpgme_version": __version__,
         "code_hash": _code_hash(),

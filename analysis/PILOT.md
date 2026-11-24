@@ -250,3 +250,51 @@ Fulgoroidea genomes (e.g. *Catonia carolina*, *Cyphopterum fauveli*) are unannot
 were re-run: features are byte-identical for every RefSeq species except 13 *Drosophila*
 mitochondrial genes, whose IDs changed from `gene:` to `locus_tag:` with identical values;
 mixture summaries differ only by floating-point noise (relative ≤ 1e-13).
+
+## A non-invasive fulgorid from a transcriptome: *Cyrpoptus belfragei* (2026-11-24)
+
+No other Fulgoridae species has an annotated genome on NCBI. Besides *Lycorma*, the only
+fulgorid assembly is *Zanna intricata* (GCA_010016005.3: unannotated, contig N50 4.5 kb).
+The other public fulgorid data are low-coverage WGS skims (about 8x) and two *Pyrops
+candelaria* RNA-seq runs with no assembly. The one usable non-invasive fulgorid is
+*Cyrpoptus belfragei* (Lystrinae; native to the US), from a whole-adult transcriptome
+assembly (TSA GCWQ01, Johnson et al. 2018, PNAS, SOAPdenovo-Trans).
+
+Added a transcriptome tier (`cpgme/tsa.py`): the longest ORF of at least 300 nt per contig,
+5'/3'-partial allowed, with exact duplicate proteins removed. This gives CDS only, with no
+gene bodies. To check the tier, the *Lycorma* transcriptome from the same 1KITE project and
+assembler (TSA GFES01) was run the same way and compared with the *Lycorma* genome CDS.
+
+| Species (source) | ORFs / genes | CDS median | Low mean, weight | High mean | Ashman's D | Bimodal |
+|---|---|---|---|---|---|---|
+| *Lycorma delicatula* (genome) | 13,877 | 0.51 | 0.46, 72 % | 0.90 | 1.81 | no |
+| *Lycorma delicatula* (TSA, tier check) | 8,223 | 0.47 | 0.44, 78 % | 0.86 | 1.59 | no |
+| ***Cyrpoptus belfragei* (TSA)** | 14,361 | **0.53** | 0.48, 74 % | 0.94 | 1.48 | no |
+| *Nilaparvata lugens* (genome) | 17,648 | 0.75 | 0.58, 35 % | 0.81 | 1.31 | no |
+| *Laodelphax striatellus* (genome) | 15,487 | 0.80 | 0.68, 45 % | 0.89 | 1.09 | no |
+| *Macrosteles quadrilineatus* (genome) | 21,708 | 0.62 | 0.59, 66 % | 0.69 | 0.50 | no |
+
+1. **The TSA tier reproduces the genome CDS profile of *Lycorma* closely.** It is shifted
+   slightly toward the low class: median 0.47 vs 0.51, low share 78 % vs 72 %. That fits
+   a transcriptome over-sampling expressed (typically methylated) genes. Differences of a
+   few hundredths between a TSA and a genome row should not be interpreted.
+2. ***Cyrpoptus* looks like *Lycorma*, not like the other planthoppers.** CDS median 0.53,
+   a dominant low class near 0.48 (74 %), and D 1.48. The delphacids sit at 0.75–0.80 with
+   a minority low class. Compared like for like (TSA vs TSA, same assembler), *Cyrpoptus* is
+   only 0.06 higher than *Lycorma*.
+3. **This argues that *Lycorma*'s low CpG O/E is a fulgorid (lineage) trait, not an
+   invasion trait**, at least in CDS. It weakens the *Lycorma* lead from the previous
+   section. The *Lycorma* result that stood out was gene-body bimodality, which a
+   transcriptome cannot test, so gene bodies in a non-invasive fulgorid are still open.
+4. Robustness (both TSAs): keeping only complete ORFs (41 % of *Cyrpoptus* rows),
+   only GC ≥ 0.3 (dropping possible AT-rich symbiont contigs, 12 %), or only ORFs
+   ≥ 900 nt changes the *Cyrpoptus* median by ≤ 0.02 and D by ≤ 0.05.
+
+Caveats: contigs are not grouped into genes, so isoforms and fragments of one gene can each
+add a row. The whole-adult library can include gut and symbiont transcripts. Neither TSA has
+GO Slim results yet; `cpgme annotate GCWQ01000000 --proteins-only` writes the proteins for
+eggNOG on Raven.
+
+`pilot_summary.tsv` and the dashboard were updated with `--merge` from this machine. The
+three pilot figures do not yet include the two TSA rows; they need a full
+`pilot_report.py` run where all results are merged.

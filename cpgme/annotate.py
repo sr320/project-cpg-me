@@ -351,6 +351,7 @@ def annotate(accession: str, results_dir: Path, data_dir: Path,
              emapper_annotations: Path | None = None, emapper_data: Path | None = None,
              cpu: int = 4, proteins_only: bool = False, log=print) -> Path:
     from .fetch import _md5, fetch
+    from .tsa import fetch_tsa, is_tsa, tsa_cds, write_proteins
 
     outdir = Path(results_dir) / accession
     features = outdir / "features.tsv.gz"
@@ -359,11 +360,16 @@ def annotate(accession: str, results_dir: Path, data_dir: Path,
     started = dt.datetime.now(dt.timezone.utc)
 
     log(f"{accession}: one protein per gene")
-    files = fetch(accession, Path(data_dir) / accession, genome=False)
-    if "PROT_FASTA" not in files:
-        raise ValueError(f"{accession}: NCBI package has no protein FASTA")
     proteins = outdir / "proteins.faa.gz"
-    gene_protein = write_gene_proteins(files["CDS_FASTA"], files["PROT_FASTA"], proteins)
+    if is_tsa(accession):
+        files = fetch_tsa(accession, Path(data_dir) / accession)
+        files["PROT_FASTA"] = files["TSA_FASTA"]  # proteins are translated from the contigs
+        gene_protein = write_proteins(tsa_cds(files["TSA_FASTA"]), proteins)
+    else:
+        files = fetch(accession, Path(data_dir) / accession, genome=False)
+        if "PROT_FASTA" not in files:
+            raise ValueError(f"{accession}: NCBI package has no protein FASTA")
+        gene_protein = write_gene_proteins(files["CDS_FASTA"], files["PROT_FASTA"], proteins)
     log(f"{accession}: {len(gene_protein)} proteins -> {proteins}")
     if proteins_only:
         return proteins
