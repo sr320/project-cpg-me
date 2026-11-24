@@ -1,4 +1,4 @@
-"""Command line: cpgme run | run-shard | status | annotate."""
+"""Command line: cpgme run | run-shard | status | annotate | validate."""
 
 from __future__ import annotations
 
@@ -60,7 +60,24 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--proteins-only", action="store_true",
                    help="only write results/<acc>/proteins.faa.gz (to annotate elsewhere)")
 
+    p = sub.add_parser("validate", help="compare CpG O/E with WGBS gene methylation "
+                                        "(Bismark CpG coverage file)")
+    p.add_argument("accession")
+    p.add_argument("--cov", type=Path, required=True, help="*.bismark.cov.gz")
+    p.add_argument("--label", required=True, help="name for this dataset, e.g. SRR1045858")
+    p.add_argument("--source", default="", help="free text: tissue, study, runs")
+    p.add_argument("--min-cov", type=int, default=5)
+    p.add_argument("--min-cpgs", type=int, default=5)
+    p.add_argument("--meth-threshold", type=float, default=0.5)
+
     args = ap.parse_args(argv)
+
+    if args.cmd == "validate":
+        from .validate import validate
+        validate(args.accession, args.results, args.data, args.cov, args.label,
+                 source={"description": args.source}, min_cov=args.min_cov,
+                 min_cpgs=args.min_cpgs, threshold=args.meth_threshold)
+        return 0
 
     if args.cmd == "annotate":
         from .annotate import annotate
