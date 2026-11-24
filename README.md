@@ -23,6 +23,19 @@ uv run cpgme status                         # what is done / pending
 uv run python analysis/pilot_report.py      # figures + summary table across species
 ```
 
+### Transcriptome tier (species with no annotated genome)
+
+A TSA project accession written like its master record (e.g. `GCWQ01000000`, project GCWQ,
+version 01) is fetched from NCBI's GenBank TSA FTP area instead. `cpgme.tsa` calls the
+longest ORF (≥ 300 nt, 5'/3'-partial allowed) on each contig and drops exact duplicate
+proteins; only the `cds` feature is produced. Manifest rows use `tier=tsa`. Contigs are not
+grouped into genes and only expressed genes are present, so compare TSA rows with care
+(see the *Lycorma* tier check in `analysis/PILOT.md`).
+
+```bash
+uv run cpgme run GCWQ01000000               # Cyrpoptus belfragei transcriptome
+```
+
 ## Dashboard
 
 A results dashboard is served by GitHub Pages from `docs/`. After new results arrive:
@@ -31,6 +44,10 @@ A results dashboard is served by GitHub Pages from `docs/`. After new results ar
 uv run python analysis/build_dashboard.py   # results/ -> docs/data/dashboard.json (summaries only)
 python3 -m http.server -d docs 8765         # preview at http://localhost:8765
 ```
+
+On a machine holding only some results, add `--merge` to `build_dashboard.py` and
+`pilot_report.py` to update just those species in the committed JSON and summary table
+(`pilot_report.py --merge` skips the figures, which need every species).
 
 Commit `docs/data/dashboard.json` to update the live page.
 

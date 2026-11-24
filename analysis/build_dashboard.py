@@ -1,6 +1,8 @@
 """Build docs/data/dashboard.json for the GitHub Pages dashboard from results/.
 
 Usage:  uv run python analysis/build_dashboard.py [--results results] [--out docs/data/dashboard.json]
+        [--merge]   keep species already in --out that are not in --results (for adding a
+                    few species on a machine without the full merged results)
 
 Only summaries go into the JSON (fits, binned histograms, GO Slim statistics, validation
 statistics), so the page stays small and no sequence data is published.
@@ -75,7 +77,7 @@ def species_record(d: Path, meta: dict) -> dict:
     rec = {
         "accession": d.name, "organism": s["organism"], "taxid": s.get("taxid"),
         "group": meta.get("group", ""), "role": meta.get("role", ""),
-        "notes": meta.get("notes", ""),
+        "tier": meta.get("tier", ""), "notes": meta.get("notes", ""),
         "assembly": prov.get("assembly_name"), "annotation": prov.get("annotation"),
         "fits": {f: {k: _r(v.get(k)) for k in FIT_KEYS if k in v}
                  for f, v in s["features"].items()},
@@ -135,15 +137,50 @@ def goslim_terms(results: Path, species: list[dict]) -> dict:
     return out
 
 
+def _merge_goslim(new: dict, old: dict, species: list[dict]) -> dict:
+    """Add GO Slim cells from a previous dashboard for species that have none locally."""
+    if not old:
+        return new
+    pos = {s["accession"]: i for i, s in enumerate(species)}
+    for feature, block in old["goslim"].items():
+        have = {c[1] for c in new.get(feature, {}).get("cells", [])}
+        tgt = new.setdefault(feature, {"terms": [], "cells": []})
+        tidx = {t["name"]: i for i, t in enumerate(tgt["terms"])}
+        for ti, si, *rest in block["cells"]:
+            acc = old["species"][si]
+            if acc not in pos or pos[acc] in have:
+                continue
+            term = block["terms"][ti]
+            if term["name"] not in tidx:
+                tidx[term["name"]] = len(tgt["terms"])
+                tgt["terms"].append(term)
+            tgt["cells"].append([tidx[term["name"]], pos[acc], *rest])
+    return new
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--results", type=Path, default=Path("results"))
     ap.add_argument("--manifest", type=Path, default=Path("manifest/species.tsv"))
     ap.add_argument("--out", type=Path, default=Path("docs/data/dashboard.json"))
+    ap.add_argument("--merge", action="store_true",
+                    help="keep species in the existing --out that are not in --results")
     a = ap.parse_args()
     meta = manifest(a.manifest)
     species = [species_record(d, meta.get(d.name, {})) for d in sorted(a.results.iterdir())
                if (d / "summary.json").exists()]
+    old_goslim = {}
+    if a.merge and a.out.exists():
+        old = json.loads(a.out.read_text())
+        local = {s["accession"] for s in species}
+        kept = [s for s in old["species"] if s["accession"] not in local]
+        # GO Slim cells index species by position; carry them over re-indexed.
+        old_goslim = {"species": [s["accession"] for s in old["species"]],
+                      "goslim": old.get("goslim", {})}
+        for s in kept:
+            m = meta.get(s["accession"], {})
+            s.update({k: m.get(k, s.get(k, "")) for k in ("group", "role", "tier", "notes")})
+        species += kept
     species.sort(key=lambda s: (GROUP_ORDER.index(s["group"]) if s["group"] in GROUP_ORDER
                                 else 99, s["role"] != "focal", s["organism"]))
     try:
@@ -157,7 +194,7 @@ def main() -> None:
         "bins": [_r(b, 3) for b in BINS.tolist()],
         "manifest_size": len(meta),
         "species": species,
-        "goslim": goslim_terms(a.results, species),
+        "goslim": _merge_goslim(goslim_terms(a.results, species), old_goslim, species),
     }
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps(data, separators=(",", ":")))

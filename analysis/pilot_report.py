@@ -2,6 +2,8 @@
 
 Usage:  uv run python analysis/pilot_report.py [--results results] [--out analysis/pilot]
 Writes  <out>_summary.tsv and <out>_<feature>.png (one small-multiple panel per species).
+        --merge  update only the rows of species in --results in an existing <out>_summary.tsv
+                 and skip the figures (they need every species' per-gene table)
 """
 
 from __future__ import annotations
@@ -124,12 +126,24 @@ def main() -> None:
     ap.add_argument("--results", type=Path, default=Path("results"))
     ap.add_argument("--manifest", type=Path, default=Path("manifest/species.tsv"))
     ap.add_argument("--out", type=Path, default=Path("analysis/pilot"))
+    ap.add_argument("--merge", action="store_true",
+                    help="update rows in an existing summary; do not redraw figures")
     a = ap.parse_args()
     species = load(a.results, a.manifest)
     tab = summary_table(species)
-    tab.to_csv(f"{a.out}_summary.tsv", sep="\t", index=False, float_format="%.4g")
-    for feature in ("cds", "gene_body", "upstream"):
-        plot(species, feature, Path(f"{a.out}_{feature}.png"))
+    path = Path(f"{a.out}_summary.tsv")
+    if a.merge and path.exists():
+        old = pd.read_csv(path, sep="\t")
+        old = old[~old.accession.isin(tab.accession)]
+        tab = pd.concat([old, tab], ignore_index=True)
+        rank = {g: i for i, g in enumerate(GROUP_ORDER)}
+        tab = tab.sort_values(["group", "organism", "accession"],
+                              key=lambda c: c.map(rank).fillna(99) if c.name == "group" else c,
+                              kind="stable")
+    tab.to_csv(path, sep="\t", index=False, float_format="%.4g")
+    if not a.merge:
+        for feature in ("cds", "gene_body", "upstream"):
+            plot(species, feature, Path(f"{a.out}_{feature}.png"))
     with pd.option_context("display.width", 200, "display.max_columns", 20):
         print(tab.round(3).to_string(index=False))
 
