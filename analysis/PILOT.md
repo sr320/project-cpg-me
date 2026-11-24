@@ -95,11 +95,51 @@ Phase 0 criterion "reproduce the bimodal distribution and GO Slim ordering for *
 met for the GO Slim ordering in both features; bimodality is met in gene bodies and
 borderline in CDS (above).
 
+## GO Slim test: all pilot species (2026-11-23)
+
+Same run settings on Raven. *Lycorma* is CDS only (gene bodies not yet run). Rank-biserial
+< 0 means housekeeping genes rank lower; p is one-sided (housekeeping lower).
+
+| Group | Species | GO coverage | Feature | HK median | IND median | Low class, HK / IND | Rank-biserial | p |
+|---|---|---|---|---|---|---|---|---|
+| coral | *Acropora millepora* | 36 % | CDS | 0.57 | 0.68 | 59 % / 42 % | −0.25 | 5 × 10⁻³⁵ |
+| | | | gene body | 0.61 | 0.77 | 59 % / 35 % | −0.36 | 5 × 10⁻⁷⁰ |
+| bivalve | *Magallana gigas* | 46 % | CDS | 0.41 | 0.64 | 83 % / 45 % | −0.47 | 9 × 10⁻¹¹⁰ |
+| | | | gene body | 0.48 | 0.70 | 84 % / 46 % | −0.39 | 7 × 10⁻⁷⁹ |
+| hemiptera | *Lycorma delicatula* | 66 % | CDS | 0.48 | 0.52 | 86 % / 77 % | −0.10 | 7 × 10⁻⁷ |
+| tunicate | *Ciona robusta* | 62 % | CDS | 0.69 | 0.80 | 63 % / 49 % | −0.16 | 1 × 10⁻¹² |
+| | | | gene body | 0.68 | 0.79 | 72 % / 52 % | −0.22 | 7 × 10⁻²⁴ |
+| sea star | *Acanthaster planci* | 59 % | CDS | 0.57 | 0.64 | 75 % / 55 % | −0.24 | 4 × 10⁻³³ |
+| | | | gene body | 0.49 | 0.54 | 89 % / 64 % | −0.23 | 2 × 10⁻³¹ |
+| control (methylated) | *Apis mellifera* | 73 % | CDS | 0.60 | 0.88 | 76 % / 46 % | −0.33 | 5 × 10⁻⁴⁴ |
+| | | | gene body | 0.81 | 1.25 | 78 % / 44 % | −0.39 | 7 × 10⁻⁶³ |
+| control (unmethylated) | *Drosophila melanogaster* | 74 % | CDS | 0.90 | 0.87 | 49 % / 61 % | +0.18 | 1 |
+| | | | gene body | 0.95 | 0.93 | 28 % / 32 % | +0.12 | 1 |
+
+"Low class" shares come from each species' two-component fit, whether or not the
+distribution is called bimodal.
+
+1. **The pattern holds in every species with gene-body methylation.** All five focal species
+   and *Apis* show lower CpG O/E in housekeeping genes, in both features where both were run.
+   Effect sizes are moderate (rank-biserial −0.10 to −0.47), largest in *Magallana* and *Apis*.
+2. **The negative control passes.** *Drosophila*, which lacks gene-body methylation, shows no
+   housekeeping-lower gap; housekeeping genes are slightly *higher* (rank-biserial +0.12 to
+   +0.18). So the split in the other species is not produced by GO annotation, gene length or
+   codon usage alone, at least not in a way that also shows up in a fly.
+3. ***Lycorma* fits the pattern, weakly.** The gap exists (p = 7 × 10⁻⁷) but is the
+   smallest (rank-biserial −0.10), and both classes sit mostly in the low class (86 % / 77 %).
+   This is consistent with its unusual distribution above: CpG depletion is broad, reaching
+   inducible genes too. Gene bodies are still needed.
+4. **GO coverage differs** (36 % in *Acropora* to 74 % in *Drosophila*), so the set of genes
+   tested is not the same across species. Orthology-based comparisons (Phase 4) will help.
+5. **The term figure** ([goslim_gene_body.png](goslim_gene_body.png)) shows the same ordering
+   across species: translation, RNA processing, DNA replication and cell-cycle terms low;
+   adhesion, extracellular matrix, signalling and organ-system terms high; *Drosophila* flat.
+
 ## Next steps
 
-1. eggNOG-mapper on the other six pilot proteomes (Raven; the database is at
-   `/home/shared/16TB_HDD_01/sr320/eggnog-data/emapperdb-5.0.2`), including the
-   *Drosophila* control, where no housekeeping/inducible difference is expected.
-2. On Raven: *Lycorma* gene bodies.
+1. On Raven: *Lycorma* gene bodies (set `genome_features` to yes in the manifest).
+2. A covariate check: does the housekeeping/inducible gap survive controlling for GC content,
+   gene length and expression breadth?
 3. Validate against measured methylation: *M. gigas* and *Apis* WGBS gene-level data.
 4. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
