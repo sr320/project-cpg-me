@@ -1,4 +1,4 @@
-"""Command line: cpgme run | run-shard | status."""
+"""Command line: cpgme run | run-shard | status | annotate."""
 
 from __future__ import annotations
 
@@ -50,7 +50,25 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("status", help="compare manifest with results")
     p.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
 
+    p = sub.add_parser("annotate", help="eggNOG/GO Slim annotation and the 2015 GO Slim test "
+                                        "(after `run`)")
+    p.add_argument("accession")
+    p.add_argument("--emapper-annotations", type=Path,
+                   help="existing *.emapper.annotations file (skip running eggNOG-mapper)")
+    p.add_argument("--emapper-data", type=Path, help="eggNOG-mapper --data_dir")
+    p.add_argument("--cpu", type=int, default=4)
+    p.add_argument("--proteins-only", action="store_true",
+                   help="only write results/<acc>/proteins.faa.gz (to annotate elsewhere)")
+
     args = ap.parse_args(argv)
+
+    if args.cmd == "annotate":
+        from .annotate import annotate
+        annotate(args.accession, args.results, args.data,
+                 emapper_annotations=args.emapper_annotations,
+                 emapper_data=args.emapper_data, cpu=args.cpu,
+                 proteins_only=args.proteins_only)
+        return 0
 
     if args.cmd == "run":
         run(args.accession, args.results, args.data, genome=args.genome, force=args.force)
@@ -82,8 +100,9 @@ def main(argv: list[str] | None = None) -> int:
         for r in rows:
             ok = is_done(args.results / r["accession"], _genome_wanted(r))
             done += ok
-            print(f"{'done   ' if ok else 'pending'}  {r['accession']:<18} {r.get('group', ''):<10} "
-                  f"{r.get('species', '')}")
+            annotated = (args.results / r["accession"] / "goslim_test.json").exists()
+            print(f"{'done   ' if ok else 'pending'}  {'annotated' if annotated else '         '}  "
+                  f"{r['accession']:<18} {r.get('group', ''):<10} {r.get('species', '')}")
         print(f"{done}/{len(rows)} done")
         return 0
     return 1
