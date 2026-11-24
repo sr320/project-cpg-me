@@ -8,6 +8,8 @@
 #
 # Environment (defaults for Raven):
 #   WGBS_ROOT  work directory (large; FASTQ and BAMs)   PARALLEL  Bismark instances
+#   NON_DIRECTIONAL=1  align all four strands (PBAT-like libraries, e.g. Zymo Pico Methyl-Seq).
+#     Check first: a directional run that maps at about half the expected rate is the sign.
 set -euo pipefail
 
 ACC=$1; LABEL=$2; DESC=$3; shift 3; RUNS=("$@")
@@ -15,6 +17,9 @@ REPO=$(cd "$(dirname "$0")/.." && pwd)
 WGBS_ROOT=${WGBS_ROOT:-/home/shared/16TB_HDD_01/sr320/cpgme-wgbs}
 PARALLEL=${PARALLEL:-6}
 THREADS=${THREADS:-16}
+NON_DIRECTIONAL=${NON_DIRECTIONAL:-0}
+DIR_OPT=(); MODE=directional
+[ "$NON_DIRECTIONAL" = 1 ] && { DIR_OPT=(--non_directional); MODE=non-directional; }
 export PATH=/home/shared/Bismark-0.24.0:/home/shared/bowtie2-2.4.4-linux-x86_64:/home/shared/sratoolkit.3.0.2-ubuntu64/bin:/home/shared/fastp-v0.24.0:/home/shared/pigz-2.8/bin:$HOME/.local/bin:$PATH
 
 GDIR=$WGBS_ROOT/$ACC/genome
@@ -50,8 +55,8 @@ for R in "${RUNS[@]}"; do
           --detect_adapter_for_pe --trim_poly_g -w 16 \
           -j "$WORK/trimmed/${R}.fastp.json" -h "$WORK/trimmed/${R}.fastp.html" 2> "$WORK/trimmed/${R}.fastp.log"
     rm -f "$WORK/fastq/${R}"_*.fastq
-    log "$R: bismark (parallel $PARALLEL)"
-    bismark --genome "$GDIR" -1 "$WORK/trimmed/${R}_1.fq.gz" -2 "$WORK/trimmed/${R}_2.fq.gz" \
+    log "$R: bismark $MODE (parallel $PARALLEL)"
+    bismark --genome "$GDIR" "${DIR_OPT[@]}" -1 "$WORK/trimmed/${R}_1.fq.gz" -2 "$WORK/trimmed/${R}_2.fq.gz" \
             --parallel "$PARALLEL" -p 2 --temp_dir "$WORK/aln" -o "$WORK/aln" \
             > "$WORK/aln/${R}.bismark.log" 2>&1
     rm -f "$WORK/trimmed/${R}"_*.fq.gz "$WORK/sra/$R"/*.sra
@@ -82,7 +87,7 @@ fi
 # 4. Compare with CpG O/E
 log "cpgme validate"
 cd "$REPO"
-uv run cpgme validate "$ACC" --cov "$COV" --label "$LABEL" --source "$DESC; runs ${RUNS[*]}"
+uv run cpgme validate "$ACC" --cov "$COV" --label "$LABEL" --source "$DESC; runs ${RUNS[*]}; Bismark $MODE"
 mkdir -p "results/$ACC/validation/$LABEL/reports"
 cp "$WORK"/aln/*_PE_report.txt "$WORK"/aln/*deduplication_report.txt "$WORK"/meth/*splitting_report.txt \
    "$WORK"/meth/*M-bias.txt "$WORK"/trimmed/*.fastp.json "results/$ACC/validation/$LABEL/reports/" 2>/dev/null || true
