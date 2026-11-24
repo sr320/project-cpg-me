@@ -23,6 +23,17 @@ uv run cpgme status                         # what is done / pending
 uv run python analysis/pilot_report.py      # figures + summary table across species
 ```
 
+## Dashboard
+
+A results dashboard is served by GitHub Pages from `docs/`. After new results arrive:
+
+```bash
+uv run python analysis/build_dashboard.py   # results/ -> docs/data/dashboard.json (summaries only)
+python3 -m http.server -d docs 8765         # preview at http://localhost:8765
+```
+
+Commit `docs/data/dashboard.json` to update the live page.
+
 ## Functional annotation and the GO Slim test
 
 After `run`, `annotate` writes one protein per gene (the longest CDS's protein), annotates it

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CpG O/E Atlas</title>
+<meta name="description" content="Comparative germline DNA methylation (CpG O/E) across invertebrates: distributions, GO Slim partitioning and WGBS validation.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">project-cpg-me</p>
+    <h1>CpG O/E Atlas</h1>
+    <p class="lede">Germline DNA methylation history across invertebrates, estimated as CpG
+      observed/expected (CpG O/E) from public genome annotations. Genes with low CpG O/E have
+      lost CpGs to methylation-driven mutation over evolutionary time. Following
+      <a href="https://doi.org/10.1111/mec.13414">Dimond &amp; Roberts 2015</a>.</p>
+    <p class="meta" id="meta"></p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section aria-label="Summary" class="tiles" id="tiles"></section>
+
+  <section class="card" aria-labelledby="h-species">
+    <div class="card-head">
+      <h2 id="h-species">Species</h2>
+      <p class="hint">Click a row to show its distribution. Click a column header to sort.</p>
+    </div>
+    <div class="table-scroll"><table class="data" id="species-table"></table></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card" aria-labelledby="h-dist">
+      <div class="card-head">
+        <h2 id="h-dist">Distribution</h2>
+        <div class="controls">
+          <label class="sr-only" for="species-select">Species</label>
+          <select id="species-select"></select>
+          <div class="seg" role="radiogroup" aria-label="Feature" id="feature-seg"></div>
+        </div>
+      </div>
+      <p class="chart-title" id="dist-title"></p>
+      <div class="chart" id="dist-chart"></div>
+      <div class="legend" id="dist-legend"></div>
+      <p class="note" id="dist-note"></p>
+    </section>
+
+    <section class="card" aria-labelledby="h-effect">
+      <div class="card-head">
+        <h2 id="h-effect">Housekeeping vs inducible genes</h2>
+      </div>
+      <p class="chart-title">Rank-biserial correlation, housekeeping vs inducible GO Slim genes.
+        Below zero: housekeeping genes have lower CpG O/E, as the 2015 paper predicts.</p>
+      <div class="chart" id="effect-chart"></div>
+      <div class="legend" id="effect-legend"></div>
+    </section>
+  </div>
+
+  <section class="card" aria-labelledby="h-goslim">
+    <div class="card-head">
+      <h2 id="h-goslim">GO Slim terms</h2>
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="Feature" id="goslim-seg"></div>
+      </div>
+    </div>
+    <p class="chart-title">Median CpG O/E of each term's genes minus that of all other annotated
+      genes. Blue: lower CpG O/E (more historical methylation); red: higher. Faded cells: q ≥ 0.05.
+      [HK] housekeeping and [IND] inducible terms were fixed before any results.</p>
+    <div class="heat-legend" id="heat-legend"></div>
+    <div class="heat-scroll"><div class="chart" id="heat-chart"></div></div>
+  </section>
+
+  <section class="card" aria-labelledby="h-valid">
+    <div class="card-head"><h2 id="h-valid">Validation against WGBS</h2></div>
+    <div id="validation"></div>
+  </section>
+
+  <section class="card methods" aria-labelledby="h-methods">
+    <h2 id="h-methods">Methods</h2>
+    <ul>
+      <li><strong>Data.</strong> RefSeq annotated genomes from the NCBI Datasets API. CDS is the
+        longest isoform per gene; gene body is the full gene span including introns; upstream is
+        1 kb before the gene on its strand. Features under 300 bp or with more than 5 % ambiguous
+        bases are excluded.</li>
+      <li><strong>CpG O/E</strong> = (n<sub>CG</sub> / (n<sub>C</sub> × n<sub>G</sub>)) × L² / (L − 1).
+        GpC O/E is computed the same way as a composition control.</li>
+      <li><strong>Mixtures.</strong> One- and two-component Gaussian mixtures per feature. A
+        distribution is called bimodal when BIC favours two components by more than 10
+        <em>and</em> Ashman's D (separation of the two modes) exceeds 2.</li>
+      <li><strong>Function.</strong> eggNOG-mapper 2.1.13 (eggNOG 5.0.2) on one protein per
+        gene; GO terms mapped to GO Slim (generic, plus response to stress, translation and
+        signal transduction). Housekeeping vs inducible: one-sided Mann-Whitney test; genes in
+        both classes excluded.</li>
+      <li><strong>Validation.</strong> WGBS reads aligned with Bismark to the same assembly;
+        gene methylation is the weighted level over CpGs with ≥ 5 reads, for genes with ≥ 5
+        such CpGs.</li>
+      <li>Code, per-species outputs and the full write-up:
+        <a href="https://github.com/sr320/project-cpg-me">github.com/sr320/project-cpg-me</a>
+        (<a href="https://github.com/sr320/project-cpg-me/blob/main/analysis/PILOT.md">PILOT.md</a>).</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="wrap foot" id="foot"></footer>
+<div class="tooltip" id="tooltip" role="status" aria-live="polite" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
