@@ -114,12 +114,14 @@ is zero coordination, not throughput.
 - **Same environment everywhere.** One locked conda/pixi environment (Linux x86-64 and
   macOS arm64), so laptops and Raven produce identical numbers. A test fixture (one small
   genome with known output) runs on each machine before it contributes.
-- **Division of labour.**
-  - Laptops and desktops: fetch plus CpG O/E plus mixture fit for standard-size genomes.
+- **Division of labour.** Participating machines (decided 2026-11-23): hete, chlo, raven and
+  klone, one shard each (`manifest/machines.tsv`, `--shard k/4`).
+  - hete, chlo, klone: fetch plus CpG O/E plus mixture fit for standard-size genomes. klone
+    (UW Hyak) runs through SLURM and needs Duo 2FA, so its jobs are submitted by hand.
   - Raven: large genomes (some bivalves and Hemiptera are multi-Gb), eggNOG-mapper,
     OrthoFinder, any transcriptome assembly, and the final merge.
-- **Collecting results.** Each machine rsyncs `results/<accession>/` to one shared location
-  (lab storage such as Gannet; to be confirmed). Raven builds the merged tables from there.
+- **Collecting results.** Each machine rsyncs `results/<accession>/` to Gannet (decided
+  2026-11-23; path in `manifest/machines.tsv`). Raven builds the merged tables from there.
   Outputs are small enough that the merged tables can also be versioned as release assets.
 - **Status.** `cpgme status` compares manifest against the shared results directory and
   prints what is done, missing, or stale.
@@ -190,8 +192,12 @@ results/      gitignored; synced to shared storage
 
 ## 11. Decisions needed
 
-Settled: Hemiptera is the insect group, with Diptera as negative control.
+Settled:
+- Hemiptera is the insect group, with Diptera as negative control.
+- Merged results live on Gannet (2026-11-23). Exact path still to be filled in
+  `manifest/machines.tsv`.
+- Participating machines are hete, chlo, raven and klone (2026-11-23): four shards, with
+  large genomes, eggNOG-mapper, OrthoFinder and the merge on Raven.
 
-1. Where merged results live (Gannet path or other).
-2. Which machines participate, so the shard count and the Raven-only job list can be fixed.
-3. Whether transcriptome-only species are in scope for the first pass or deferred.
+Open:
+1. Whether transcriptome-only species are in scope for the first pass or deferred.
