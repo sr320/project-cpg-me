@@ -1,0 +1,10 @@
+# Pilot manifest. One row per assembly. genome_features=yes downloads the genome for gene-body/upstream features.
+# role: focal | control_methylated | control_unmethylated
+group	species	taxid	accession	tier	genome_features	role	notes
+coral	Acropora millepora	45264	GCF_013753865.1	genome_annotation	yes	focal	genus used in Dimond & Roberts 2015
+bivalve	Magallana gigas	29159	GCF_963853765.1	genome_annotation	yes	focal	Crassostrea gigas; published WGBS for validation
+hemiptera	Lycorma delicatula	130591	GCF_047948215.1	genome_annotation	no	focal	spotted lanternfly; 2.2 Gb genome, gene bodies deferred to Raven
+tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	
+seastar	Acanthaster planci	133434	GCF_054643075.1	genome_annotation	yes	focal	crown-of-thorns; outbreak species
+control	Apis mellifera	7460	GCF_003254395.2	genome_annotation	yes	control_methylated	clear bimodality expected
+control	Drosophila melanogaster	7227	GCF_000001215.4	genome_annotation	yes	control_unmethylated	single mode near 1 expected
