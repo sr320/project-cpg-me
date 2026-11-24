@@ -1,0 +1,8 @@
+# Machines that contribute results. Each runs: uv run cpgme run-shard --shard <shard>
+# Run `uv run pytest -q` on a machine before it contributes. Results sync to Gannet (merged_results below).
+# merged_results: gannet:<path TBD>/project-cpg-me/results/
+machine	shard	roles	notes
+hete	1/4	standard genomes
+chlo	2/4	standard genomes
+raven	3/4	standard genomes; large genomes (multi-Gb); eggNOG-mapper; OrthoFinder; final merge	eggNOG DB at /home/shared/16TB_HDD_01/sr320/eggnog-data/emapperdb-5.0.2
+klone	4/4	standard genomes; batch jobs via SLURM	UW Hyak; Duo 2FA, so jobs are submitted by hand
