@@ -1,0 +1,20 @@
+group	organism	accession	feature	n	median	bimodal	bimodal_bic	delta_bic	ashman_d	low_mean	low_weight	high_mean	threshold	gpc_oe_median
+coral	Acropora millepora	GCF_013753865.1	cds	29970	0.7073	False	True	181.1	1.96	0.4873	0.3979	0.828	0.6209	1.014
+coral	Acropora millepora	GCF_013753865.1	gene_body	30136	0.7826	True	True	1844	2.419	0.5175	0.3546	0.8744	0.6631	1.074
+coral	Acropora millepora	GCF_013753865.1	upstream	30024	0.9057	False	True	1127	1.304	0.6933	0.3415	0.9836	0.7244	1.082
+bivalve	Magallana gigas	GCF_963853765.1	cds	25930	0.6341	True	True	2095	2.741	0.4175	0.4499	0.7969	0.5889	0.8272
+bivalve	Magallana gigas	GCF_963853765.1	gene_body	26072	0.7112	True	True	5903	3.534	0.4547	0.4369	0.8466	0.6352	0.968
+bivalve	Magallana gigas	GCF_963853765.1	upstream	26044	0.8245	False	False	-158.2	1.026	0.6983	0.4868	0.9441	0.8271	1
+hemiptera	Lycorma delicatula	GCF_047948215.1	cds	13877	0.5115	False	True	3935	1.808	0.4553	0.7212	0.9048	0.7425	1.011
+tunicate	Ciona robusta	GCF_009617815.1	cds	14101	0.7926	True	True	756.4	2.543	0.5858	0.4892	0.9998	0.7849	0.9705
+tunicate	Ciona robusta	GCF_009617815.1	gene_body	14249	0.803	True	True	2104	3.133	0.6096	0.5081	1.034	0.8138	1.073
+tunicate	Ciona robusta	GCF_009617815.1	upstream	14245	1.033	False	True	360.1	1.783	0.7061	0.3077	1.129	0.8134	1.137
+seastar	Acanthaster planci	GCF_054643075.1	cds	18389	0.6462	True	True	415.1	2.214	0.516	0.5345	0.808	0.6708	0.9446
+seastar	Acanthaster planci	GCF_054643075.1	gene_body	18606	0.5586	True	True	6328	3.88	0.4759	0.5963	0.8177	0.6489	1.013
+seastar	Acanthaster planci	GCF_054643075.1	upstream	18512	0.7843	False	False	-30.75	1.25	0.639	0.4023	0.8654	0.6875	1.047
+control	Apis mellifera	GCF_003254395.2	cds	9726	0.8442	True	True	1127	2.96	0.525	0.4769	1.14	0.8107	1.026
+control	Apis mellifera	GCF_003254395.2	gene_body	9920	1.166	True	True	1819	3.297	0.7409	0.4812	1.507	1.125	1.16
+control	Apis mellifera	GCF_003254395.2	upstream	9933	1.426	False	False	-98.49	1.529	1.012	0.3917	1.647	1.212	1.222
+control	Drosophila melanogaster	GCF_000001215.4	cds	13168	0.8774	False	False	-48.04	0.9311	0.8286	0.5238	0.9326	0.903	1.106
+control	Drosophila melanogaster	GCF_000001215.4	gene_body	13905	0.9237	False	False	-90.35	0.9213	0.8657	0.443	0.9659	0.883	1.192
+control	Drosophila melanogaster	GCF_000001215.4	upstream	13948	0.9865	False	True	304.7	1.284	0.9181	0.5984	1.117	1.075	1.275
