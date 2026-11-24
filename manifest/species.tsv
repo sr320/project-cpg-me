@@ -12,6 +12,8 @@ bivalve	Mercenaria mercenaria	6596	GCF_021730395.1	genome_annotation	yes	focal	h
 bivalve	Dreissena polymorpha	45954	GCF_020536995.1	genome_annotation	yes	focal	zebra mussel; invasive freshwater bivalve
 hemiptera	Lycorma delicatula	130591	GCF_047948215.1	genome_annotation	yes	focal	spotted lanternfly; 2.2 Gb genome, gene bodies run on Raven
 hemiptera	Nilaparvata lugens	108931	GCF_014356525.2	genome_annotation	yes	focal	brown planthopper; non-invasive contrast for Lycorma; published WGBS
+hemiptera	Laodelphax striatellus	195883	GCA_003335185.2	genome_annotation	yes	focal	small brown planthopper (Delphacidae); native Eurasian rice pest, not listed as invasive; GenBank annotation
+hemiptera	Macrosteles quadrilineatus	74068	GCF_028750875.1	genome_annotation	yes	focal	aster leafhopper (Cicadellidae); native to North America, not invasive
 tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	
 tunicate	Styela clava	7725	GCF_964204865.1	genome_annotation	yes	focal	invasive marine tunicate
 seastar	Acanthaster planci	133434	GCF_054643075.1	genome_annotation	yes	focal	crown-of-thorns; outbreak species

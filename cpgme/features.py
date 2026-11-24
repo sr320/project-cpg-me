@@ -8,7 +8,9 @@ gene_body  full protein-coding gene span from the GFF, introns included (needs g
 upstream   1 kb upstream of the gene on its own strand, clipped at sequence ends
            (needs genome).
 
-Gene IDs are NCBI GeneIDs ("GeneID:12345"), which link CDS records to GFF genes.
+Gene IDs are NCBI GeneIDs ("GeneID:12345"), which link CDS records to GFF genes. Submitter
+(GenBank) annotations often have no GeneID; they fall back to the locus tag
+("locus_tag:ABC_00001"), which both the CDS headers and the GFF genes carry.
 """
 
 from __future__ import annotations
@@ -29,6 +31,8 @@ def _gene_id_from_cds_header(tags: dict[str, str]) -> str | None:
     for xref in tags.get("db_xref", "").split(","):
         if xref.startswith("GeneID:"):
             return xref
+    if tags.get("locus_tag"):
+        return f"locus_tag:{tags['locus_tag']}"
     if "gene" in tags:
         return f"gene:{tags['gene']}"
     return None
@@ -60,13 +64,16 @@ def longest_cds(cds_fasta: Path) -> dict[str, dict]:
 
 
 def protein_coding_genes(gff: Path) -> dict[str, list[dict]]:
-    """Return {seqid: [gene records]} for protein-coding genes with a GeneID."""
+    """Return {seqid: [gene records]} for protein-coding genes with a GeneID (or, failing
+    that, a locus tag)."""
     by_seq: dict[str, list[dict]] = defaultdict(list)
     for rec in read_gff(gff, {"gene"}):
         attrs = rec["attrs"]
         if attrs.get("gene_biotype", "protein_coding") != "protein_coding":
             continue
         gid = next((x for x in attrs.get("Dbxref", "").split(",") if x.startswith("GeneID:")), None)
+        if gid is None and attrs.get("locus_tag"):
+            gid = f"locus_tag:{attrs['locus_tag']}"
         if gid is None:
             continue
         by_seq[rec["seqid"]].append({

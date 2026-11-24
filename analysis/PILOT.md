@@ -220,3 +220,33 @@ Mytilida, Pectinida and Venerida (incl. Dreissenidae).
 GO Slim annotation for these five is pending: `proteins.faa.gz` is written for each, but the
 local eggNOG database (`data/_eggnog/eggnog.db.gz`) is a truncated download, so emapper must
 run on Raven.
+
+## Two non-invasive *Lycorma* relatives (2026-11-23)
+
+Added *Laodelphax striatellus* (small brown planthopper, Delphacidae; native Eurasian rice
+pest) and *Macrosteles quadrilineatus* (aster leafhopper, Cicadellidae; native to North
+America). These are the only annotated Auchenorrhyncha genomes on NCBI besides *Lycorma*,
+*Nilaparvata* and the invasive *Homalodisca vitripennis*. Four were requested; other
+Fulgoroidea genomes (e.g. *Catonia carolina*, *Cyphopterum fauveli*) are unannotated.
+
+| Species | Genes | CDS median | Ashman's D, CDS / gene body | Bimodal, CDS / gene body |
+|---|---|---|---|---|
+| *Lycorma delicatula* (invasive) | 13,877 | 0.51 | 1.81 / 2.43 | no / yes |
+| *Nilaparvata lugens* | 17,648 | 0.75 | 1.31 / 0.42 | no / no |
+| *Laodelphax striatellus* | 15,487 | 0.80 | 1.09 / 0.11 | no / no |
+| *Macrosteles quadrilineatus* | 21,708 | 0.62 | 0.50 / 0.23 | no / no |
+
+1. **None of the three non-invasive relatives is bimodal**, in CDS or gene bodies.
+   *Lycorma* is the only auchenorrhynchan with two separated gene-body classes, and it also
+   has by far the lowest median CpG O/E.
+2. The two delphacids (*Nilaparvata*, *Laodelphax*) are very similar: CDS median 0.75–0.80,
+   gene-body D below 0.5. *Macrosteles* has a lower median (0.62) but still one broad mode.
+3. This sharpens the *Lycorma* lead but does not separate invasiveness from lineage:
+   *Lycorma* is the only fulgorid, and the relatives come from two other families. An
+   annotated non-invasive fulgorid would be the decisive comparison.
+
+**Parser change.** *Laodelphax* has a GenBank (submitter) annotation with no NCBI GeneIDs.
+`features.py` now falls back to `locus_tag` when a record has no GeneID. All 19 species
+were re-run: features are byte-identical for every RefSeq species except 13 *Drosophila*
+mitochondrial genes, whose IDs changed from `gene:` to `locus_tag:` with identical values;
+mixture summaries differ only by floating-point noise (relative ≤ 1e-13).
