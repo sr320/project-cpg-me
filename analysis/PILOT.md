@@ -65,9 +65,41 @@ comparison.
 - Disk: about 4.2 GB of downloads for the seven species; can be deleted after a run.
   The 2.2 Gb *Lycorma* genome was left to Raven as planned.
 
+## GO Slim test: *Acropora millepora* (2026-11-23)
+
+`cpgme annotate` on Raven (eggNOG-mapper 2.1.13, eggNOG DB 5.0.2, diamond 2.0.11; GO
+release 2026-07-26; 40 cores, about 6 minutes). Figures: [goslim_gene_body.png](goslim_gene_body.png),
+[goslim_cds.png](goslim_cds.png). Table: [goslim_tests.tsv](goslim_tests.tsv).
+
+| Feature | Housekeeping median (n) | Inducible median (n) | Low class, HK / IND | Rank-biserial | p (HK lower) |
+|---|---|---|---|---|---|
+| CDS | 0.57 (924) | 0.68 (5,174) | 59 % / 42 % | −0.25 | 5 × 10⁻³⁵ |
+| Gene body | 0.61 (942) | 0.77 (5,196) | 59 % / 35 % | −0.36 | 5 × 10⁻⁷⁰ |
+
+1. **The 2015 pattern holds.** Genes in housekeeping GO Slim terms have lower CpG O/E (more
+   historical germline methylation) than genes in inducible terms, in CDS and more strongly
+   in gene bodies.
+2. **The term ranking agrees.** Of 71 terms with ≥ 20 genes (gene bodies), all twelve
+   housekeeping terms rank below the median (mean rank 10); the lowest four are
+   cytoplasmic translation, mitochondrial gene expression, translation and ribosome
+   biogenesis. Inducible terms average rank 55, led by extracellular matrix organization,
+   inflammatory response and cell adhesion. Terms outside both sets also behave sensibly:
+   DNA repair and autophagy sit low; nervous, circulatory, muscle and endocrine system
+   processes sit high.
+3. **Caveats.** One species. Only 36 % of genes have GO terms from eggNOG (10,995 of 30,136),
+   so the test rests on the better-characterised genes. About 1,700 genes carry both a
+   housekeeping and an inducible term and are excluded. The 2015 paper used transcriptomes
+   and an older GO Slim, so this matches its pattern, not its exact numbers.
+
+Phase 0 criterion "reproduce the bimodal distribution and GO Slim ordering for *Acropora*":
+met for the GO Slim ordering in both features; bimodality is met in gene bodies and
+borderline in CDS (above).
+
 ## Next steps
 
-1. On Raven: *Lycorma* gene bodies, and eggNOG-mapper on all seven proteomes, to test the
-   GO Slim pattern from the 2015 paper (housekeeping genes low CpG O/E, inducible genes high).
-2. Validate against measured methylation: *M. gigas* and *Apis* WGBS gene-level data.
-3. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
+1. eggNOG-mapper on the other six pilot proteomes (Raven; the database is at
+   `/home/shared/16TB_HDD_01/sr320/eggnog-data/emapperdb-5.0.2`), including the
+   *Drosophila* control, where no housekeeping/inducible difference is expected.
+2. On Raven: *Lycorma* gene bodies.
+3. Validate against measured methylation: *M. gigas* and *Apis* WGBS gene-level data.
+4. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
