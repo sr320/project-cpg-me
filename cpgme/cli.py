@@ -1,4 +1,4 @@
-"""Command line: cpgme run | run-shard | status."""
+"""Command line: cpgme run | run-shard | status | annotate | validate."""
 
 from __future__ import annotations
 
@@ -50,7 +50,42 @@ def main(argv: list[str] | None = None) -> int:
     p = sub.add_parser("status", help="compare manifest with results")
     p.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
 
+    p = sub.add_parser("annotate", help="eggNOG/GO Slim annotation and the 2015 GO Slim test "
+                                        "(after `run`)")
+    p.add_argument("accession")
+    p.add_argument("--emapper-annotations", type=Path,
+                   help="existing *.emapper.annotations file (skip running eggNOG-mapper)")
+    p.add_argument("--emapper-data", type=Path, help="eggNOG-mapper --data_dir")
+    p.add_argument("--cpu", type=int, default=4)
+    p.add_argument("--proteins-only", action="store_true",
+                   help="only write results/<acc>/proteins.faa.gz (to annotate elsewhere)")
+
+    p = sub.add_parser("validate", help="compare CpG O/E with WGBS gene methylation "
+                                        "(Bismark CpG coverage file)")
+    p.add_argument("accession")
+    p.add_argument("--cov", type=Path, required=True, help="*.bismark.cov.gz")
+    p.add_argument("--label", required=True, help="name for this dataset, e.g. SRR1045858")
+    p.add_argument("--source", default="", help="free text: tissue, study, runs")
+    p.add_argument("--min-cov", type=int, default=5)
+    p.add_argument("--min-cpgs", type=int, default=5)
+    p.add_argument("--meth-threshold", type=float, default=0.5)
+
     args = ap.parse_args(argv)
+
+    if args.cmd == "validate":
+        from .validate import validate
+        validate(args.accession, args.results, args.data, args.cov, args.label,
+                 source={"description": args.source}, min_cov=args.min_cov,
+                 min_cpgs=args.min_cpgs, threshold=args.meth_threshold)
+        return 0
+
+    if args.cmd == "annotate":
+        from .annotate import annotate
+        annotate(args.accession, args.results, args.data,
+                 emapper_annotations=args.emapper_annotations,
+                 emapper_data=args.emapper_data, cpu=args.cpu,
+                 proteins_only=args.proteins_only)
+        return 0
 
     if args.cmd == "run":
         run(args.accession, args.results, args.data, genome=args.genome, force=args.force)
@@ -82,8 +117,9 @@ def main(argv: list[str] | None = None) -> int:
         for r in rows:
             ok = is_done(args.results / r["accession"], _genome_wanted(r))
             done += ok
-            print(f"{'done   ' if ok else 'pending'}  {r['accession']:<18} {r.get('group', ''):<10} "
-                  f"{r.get('species', '')}")
+            annotated = (args.results / r["accession"] / "goslim_test.json").exists()
+            print(f"{'done   ' if ok else 'pending'}  {'annotated' if annotated else '         '}  "
+                  f"{r['accession']:<18} {r.get('group', ''):<10} {r.get('species', '')}")
         print(f"{done}/{len(rows)} done")
         return 0
     return 1
