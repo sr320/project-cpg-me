@@ -188,3 +188,35 @@ settings on Raven. GO Slim test, housekeeping (HK) vs inducible (IND):
 2. A covariate check: does the housekeeping/inducible gap survive controlling for GC content,
    gene length and expression breadth?
 3. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
+
+## Five more bivalves (2026-11-23)
+
+Added *Ostrea edulis*, *Mytilus edulis*, *Pecten maximus*, *Mercenaria mercenaria* and
+*Dreissena polymorpha* (chromosome-level RefSeq reference genomes; CDS + gene bodies, run on a
+laptop, about 6 minutes for all five including downloads). Bivalves now span Ostreida,
+Mytilida, Pectinida and Venerida (incl. Dreissenidae).
+
+| Species | Genes | CDS median | CDS low class: share, mean | Ashman's D, CDS / gene body | Bimodal, CDS / gene body |
+|---|---|---|---|---|---|
+| *Ostrea edulis* | 27,586 | 0.66 | 42 %, 0.42 | 2.75 / 3.26 | yes / yes |
+| *Mytilus edulis* | 35,671 | 0.60 | 36 %, 0.29 | 2.80 / 3.53 | yes / yes |
+| *Pecten maximus* | 25,959 | 0.68 | 42 %, 0.46 | 1.93 / 2.89 | no / yes |
+| *Mercenaria mercenaria* | 38,088 | 0.72 | 33 %, 0.40 | 2.84 / 3.62 | yes / yes |
+| *Dreissena polymorpha* | 36,148 | 0.80 | 45 %, 0.49 | 3.10 / 3.60 | yes / yes |
+
+1. **All seven bivalves are bimodal in gene bodies** (D 2.9–3.8), and six of seven in CDS.
+   Bivalves are the most consistently bimodal group in the set.
+2. ***Pecten* CDS is the one miss** (D 1.93, BIC favours one component), like *Acropora* CDS:
+   the gene-body call is clear, so this is overlap of the two CDS classes, not a missing class.
+3. ***Mytilus* has the deepest low class** (CDS low mean 0.29 vs 0.40–0.49 in the others),
+   suggesting the most heavily methylated gene set (strongest historical CpG depletion).
+4. ***Dreissena* is shifted up** (CDS median 0.80, high mode at 1.0, GpC O/E 0.96) yet still
+   cleanly bimodal (D 3.1). The whole distribution is higher, not flatter; whether that is
+   composition or less methylation needs WGBS or the GpC comparison across groups.
+5. The oysters (*Magallana*, *Crassostrea*, *Ostrea*) are nearly indistinguishable
+   (CDS low mean 0.42 in all three).
+6. Upstream regions: no new bivalve is bimodal under the adopted rule.
+
+GO Slim annotation for these five is pending: `proteins.faa.gz` is written for each, but the
+local eggNOG database (`data/_eggnog/eggnog.db.gz`) is a truncated download, so emapper must
+run on Raven.

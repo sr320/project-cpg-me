@@ -5,6 +5,11 @@ coral	Acropora millepora	45264	GCF_013753865.1	genome_annotation	yes	focal	genus
 coral	Stylophora pistillata	50429	GCF_964205215.1	genome_annotation	yes	focal	published WGBS for validation
 bivalve	Magallana gigas	29159	GCF_963853765.1	genome_annotation	yes	focal	Crassostrea gigas; published WGBS for validation
 bivalve	Crassostrea virginica	6565	GCF_053477285.1	genome_annotation	yes	focal	eastern oyster; native, contrast with M. gigas; published WGBS for validation
+bivalve	Ostrea edulis	37623	GCF_947568905.1	genome_annotation	yes	focal	European flat oyster; non-Crassostrea ostreid
+bivalve	Mytilus edulis	6550	GCF_963676685.1	genome_annotation	yes	focal	blue mussel; Mytilida
+bivalve	Pecten maximus	6579	GCF_902652985.1	genome_annotation	yes	focal	great scallop; Pectinida
+bivalve	Mercenaria mercenaria	6596	GCF_021730395.1	genome_annotation	yes	focal	hard clam; Venerida
+bivalve	Dreissena polymorpha	45954	GCF_020536995.1	genome_annotation	yes	focal	zebra mussel; invasive freshwater bivalve
 hemiptera	Lycorma delicatula	130591	GCF_047948215.1	genome_annotation	yes	focal	spotted lanternfly; 2.2 Gb genome, gene bodies run on Raven
 hemiptera	Nilaparvata lugens	108931	GCF_014356525.2	genome_annotation	yes	focal	brown planthopper; non-invasive contrast for Lycorma; published WGBS
 tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	
