@@ -157,3 +157,21 @@ def test_skewed_unimodal_large_n_not_bimodal():
     s, _ = fit_distribution(x)
     assert s["bimodal_bic"] and s["ashman_d"] < 2
     assert not s["bimodal"]
+
+
+def test_locus_tag_fallback_for_genbank_annotation(tmp_path):
+    """Submitter annotations have no GeneID; CDS and GFF genes link through locus_tag."""
+    cds = tmp_path / "cds.fna"
+    cds.write_text(
+        ">lcl|s1_cds_RZF1.1_1 [locus_tag=LS_001] [protein_id=RZF1.1]\nATGCGA\n"
+        ">lcl|s1_cds_RZF2.1_2 [locus_tag=LS_001] [protein_id=RZF2.1]\nATGCGACGTTAA\n")
+    gff = tmp_path / "g.gff"
+    gff.write_text(
+        "s1\tGenbank\tgene\t11\t20\t.\t+\t.\tID=gene-LS_001;gene_biotype=protein_coding;"
+        "locus_tag=LS_001\n")
+    from cpgme.features import longest_cds, protein_coding_genes
+    best = longest_cds(cds)
+    assert set(best) == {"locus_tag:LS_001"}
+    assert best["locus_tag:LS_001"]["protein_id"] == "RZF2.1"
+    genes = protein_coding_genes(gff)
+    assert [g["gene_id"] for g in genes["s1"]] == ["locus_tag:LS_001"]
