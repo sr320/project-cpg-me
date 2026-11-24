@@ -2,9 +2,14 @@
 # role: focal | control_methylated | control_unmethylated
 group	species	taxid	accession	tier	genome_features	role	notes
 coral	Acropora millepora	45264	GCF_013753865.1	genome_annotation	yes	focal	genus used in Dimond & Roberts 2015
+coral	Stylophora pistillata	50429	GCF_964205215.1	genome_annotation	yes	focal	published WGBS for validation
 bivalve	Magallana gigas	29159	GCF_963853765.1	genome_annotation	yes	focal	Crassostrea gigas; published WGBS for validation
+bivalve	Crassostrea virginica	6565	GCF_053477285.1	genome_annotation	yes	focal	eastern oyster; native, contrast with M. gigas; published WGBS for validation
 hemiptera	Lycorma delicatula	130591	GCF_047948215.1	genome_annotation	yes	focal	spotted lanternfly; 2.2 Gb genome, gene bodies run on Raven
+hemiptera	Nilaparvata lugens	108931	GCF_014356525.2	genome_annotation	yes	focal	brown planthopper; non-invasive contrast for Lycorma; published WGBS
 tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	
+tunicate	Styela clava	7725	GCF_964204865.1	genome_annotation	yes	focal	invasive marine tunicate
 seastar	Acanthaster planci	133434	GCF_054643075.1	genome_annotation	yes	focal	crown-of-thorns; outbreak species
+seastar	Asterias rubens	7604	GCF_902459465.1	genome_annotation	yes	focal	non-outbreak contrast for Acanthaster
 control	Apis mellifera	7460	GCF_003254395.2	genome_annotation	yes	control_methylated	clear bimodality expected
 control	Drosophila melanogaster	7227	GCF_000001215.4	genome_annotation	yes	control_unmethylated	single mode near 1 expected
