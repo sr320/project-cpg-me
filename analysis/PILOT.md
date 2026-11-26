@@ -183,8 +183,8 @@ settings on Raven. GO Slim test, housekeeping (HK) vs inducible (IND):
 
 ## Next steps
 
-1. WGBS validation (running on Raven): *M. gigas* gonad (SRR1045858) and eight female gonads
-   (PRJNA806944), *Apis* sperm (GSM1897585). Then *N. lugens* WGBS to explain its flat profile.
+1. ~~WGBS validation for *M. gigas* and *Apis*~~ (done, see "WGBS validation" below). Next:
+   *N. lugens* WGBS to explain its flat profile.
 2. A covariate check: does the housekeeping/inducible gap survive controlling for GC content,
    gene length and expression breadth?
 3. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
@@ -298,3 +298,37 @@ eggNOG on Raven.
 `pilot_summary.tsv` and the dashboard were updated with `--merge` from this machine. The
 three pilot figures do not yet include the two TSA rows; they need a full
 `pilot_report.py` run where all results are merged.
+
+## WGBS validation: *M. gigas* and *Apis* (2026-11-25)
+
+Reads were aligned with Bismark 0.24 to the same assemblies as `cpgme run`
+(`scripts/wgbs_bismark.sh` on Raven). Gene methylation is the weighted level over CpGs with
+≥ 5 reads, for genes with ≥ 5 such CpGs. A gene counts as methylated at ≥ 0.5. Gene body:
+
+| Dataset | Genes | Spearman ρ | AUC | Misclassified | Precision | Recall | Median meth, low / high class |
+|---|---|---|---|---|---|---|---|
+| *M. gigas* gonad, SRR1045858 (PRJNA213124) | 24,698 | −0.70 | 0.92 | 16 % | 0.67 | 0.95 | 0.64 / 0.002 |
+| *M. gigas* female gonads, 8 samples (PRJNA806944) | 24,701–24,929 | −0.70 to −0.71 | 0.88–0.90 | 20–22 % | 0.51–0.57 | 0.96 | 0.50–0.55 / 0.005–0.006 |
+| *A. mellifera* sperm, GSM1897585 | 9,778 | −0.81 | 0.91 | 34 % | 0.28 | 0.99 | 0.33 / 0.007 |
+
+CDS gives the same picture, slightly weaker (*M. gigas* ρ −0.63 to −0.65, AUC 0.84–0.86;
+*Apis* ρ −0.77, AUC 0.87).
+
+- CpG O/E predicts measured methylation well in both species. Almost every methylated gene is
+  in the low CpG O/E class (recall 0.95–0.99), and genes in the high class are essentially
+  unmethylated (median 0.002–0.007).
+- The errors are almost all in one direction: low-class genes that are not methylated above
+  0.5 in the sample. The low class is a record of germline methylation over evolutionary
+  time, so some genes in it are expected to be partly or not methylated in a given tissue.
+  In *Apis*, methylated genes are rarer and more lightly methylated (median 0.33 in the low
+  class), so precision is lower.
+- The eight female gonads agree closely with each other (ρ range 0.006), so one sample per
+  species is enough for this check.
+- The PRJNA806944 libraries are non-directional (Zymo Pico Methyl-Seq). Directional mode
+  mapped 21 %, non-directional 41 %. The CpG methylation level was the same (12.2 % vs
+  12.3 % on 1M read pairs), and validation statistics hardly changed for the two samples run
+  both ways, so directional mode lost coverage but did not bias results. `NON_DIRECTIONAL=1`
+  in the script handles these libraries. Mapping: SRR1045858 39 %, *Apis* 65–66 %.
+
+Per-sample results: `results/<accession>/validation/<label>/validation.json` and the
+dashboard's validation table.
