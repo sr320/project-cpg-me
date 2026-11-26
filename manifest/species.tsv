@@ -1,7 +1,7 @@
 # Species manifest. One row per assembly. genome_features=yes downloads the genome for gene-body/upstream features.
 # role: focal | control_methylated | control_unmethylated | tier_check (same species as a genome row, other tier)
 # tier: genome_annotation (accession GCF_/GCA_) | tsa (TSA project accession like GCWQ01000000; CDS only, longest ORF per contig)
-# busco_complete: BUSCO metazoa_odb10 completeness of the annotation (busco_source ncbi: NCBI annotation report; cpgme: scripts/busco_candidates.sh). Phase 1 genome rows need >= 0.80; see manifest/candidates.tsv.
+# busco_complete: BUSCO metazoa_odb10 completeness of the annotation (busco_source ncbi: NCBI annotation report; cpgme: scripts/busco_candidates.sh). Phase 1 rows (genome and TSA) need >= 0.80; TSA rows are scored on the longest ORF per contig; see manifest/candidates.tsv.
 group	species	taxid	accession	tier	genome_features	role	busco_complete	busco_source	notes
 coral	Acropora cervicornis	6130	GCA_032359415.1	genome_annotation	yes	focal	0.822	cpgme	phase 1 (NCBI candidates)
 coral	Acropora millepora	45264	GCF_013753865.1	genome_annotation	yes	focal	0.965	ncbi	genus used in Dimond & Roberts 2015
@@ -25,8 +25,10 @@ coral	Porites lobata	104759	GCA_942486035.1	genome_annotation	yes	focal	0.95	cpg
 coral	Porites lutea	51062	GCF_958299795.1	genome_annotation	yes	focal	0.966	ncbi	phase 1 (NCBI candidates)
 coral	Stylophora pistillata	50429	GCF_964205215.1	genome_annotation	yes	focal	0.978	ncbi	published WGBS for validation
 bivalve	Argopecten irradians	31199	GCF_041381155.1	genome_annotation	yes	focal	0.95	ncbi	phase 1 (NCBI candidates)
+bivalve	Corbicula fluminea	45949	GFYR01000000	tsa	no	focal	0.968	cpgme	phase 1 gap; Asian clam; invasive; no annotated genome (TSA, Trinity)
 bivalve	Crassostrea virginica	6565	GCF_053477285.1	genome_annotation	yes	focal	0.991	ncbi	eastern oyster; native, contrast with M. gigas; published WGBS for validation
 bivalve	Dreissena polymorpha	45954	GCF_020536995.1	genome_annotation	yes	focal	0.92	ncbi	zebra mussel; invasive freshwater bivalve
+bivalve	Dreissena rostriformis bugensis	427924	GHIX01000000	tsa	no	focal	0.92	cpgme	phase 1 gap; quagga mussel; invasive; no annotated genome (TSA, DRAP Oases; GHRL01 BUSCO 0.745 not used)
 bivalve	Mactra antiquata	2302425	GCA_047288015.1	genome_annotation	yes	focal	0.978	cpgme	phase 1 (NCBI candidates)
 bivalve	Magallana angulata	2784310	GCF_025612915.1	genome_annotation	yes	focal	0.988	ncbi	phase 1 (NCBI candidates)
 bivalve	Magallana gigas	29159	GCF_963853765.1	genome_annotation	yes	focal	0.963	ncbi	Crassostrea gigas; published WGBS for validation
@@ -60,7 +62,7 @@ hemiptera	Aquarius najas	108913	GCA_988221655.1	genome_annotation	yes	focal	0.95
 hemiptera	Bemisia tabaci	7038	GCF_001854935.1	genome_annotation	yes	focal	0.988	ncbi	phase 1 (NCBI candidates)
 hemiptera	Cimex lectularius	79782	GCF_000648675.2	genome_annotation	yes	focal	0.994	ncbi	phase 1 (NCBI candidates)
 hemiptera	Cinara cedri	506608	GCA_902439185.1	genome_annotation	yes	focal	0.885	cpgme	phase 1 (NCBI candidates)
-hemiptera	Cyrpoptus belfragei	1464866	GCWQ01000000	tsa	no	focal			Fulgoridae (Lystrinae); native to the US, not invasive; whole-adult transcriptome (Johnson et al. 2018), CDS only
+hemiptera	Cyrpoptus belfragei	1464866	GCWQ01000000	tsa	no	focal	0.865	cpgme	Fulgoridae (Lystrinae); native to the US, not invasive; whole-adult transcriptome (Johnson et al. 2018), CDS only
 hemiptera	Daktulosphaira vitifoliae	58002	GCF_025091365.1	genome_annotation	yes	focal	0.991	ncbi	phase 1 (NCBI candidates)
 hemiptera	Diuraphis noxia	143948	GCF_037042655.1	genome_annotation	yes	focal	0.997	ncbi	phase 1 (NCBI candidates)
 hemiptera	Gerris buenoi	56086	GCA_977966815.1	genome_annotation	yes	focal	0.818	cpgme	phase 1 (NCBI candidates)
@@ -86,8 +88,9 @@ hemiptera	Rhopalosiphum padi	40932	GCF_020882245.1	genome_annotation	yes	focal	0
 hemiptera	Rhynocoris fuscipes	488301	GCA_040020575.1	genome_annotation	yes	focal	0.827	cpgme	phase 1 (NCBI candidates)
 hemiptera	Semiaphis heraclei	796293	GCA_046119115.1	genome_annotation	yes	focal	0.93	cpgme	phase 1 (NCBI candidates)
 hemiptera	Sipha flava	143950	GCF_003268045.1	genome_annotation	yes	focal	0.967	ncbi	phase 1 (NCBI candidates)
+hemiptera	Sogatella furcifera	113103	GFWP01000000	tsa	no	focal	0.843	cpgme	phase 1 gap; white-backed planthopper (Delphacidae); no annotated genome (TSA, Trinity, whole-body 5th instar)
 hemiptera	Uroleucon formosanum	796250	GCA_046862315.1	genome_annotation	yes	focal	0.938	cpgme	phase 1 (NCBI candidates)
-hemiptera	Lycorma delicatula	130591	GFES01000000	tsa	no	tier_check			same 1KITE pipeline and assembler as Cyrpoptus; checks TSA CDS against the Lycorma genome row
+hemiptera	Lycorma delicatula	130591	GFES01000000	tsa	no	tier_check	0.79	cpgme	same 1KITE pipeline and assembler as Cyrpoptus; checks TSA CDS against the Lycorma genome row
 tunicate	Aplidium turbinatum	2771288	GCF_918807975.1	genome_annotation	yes	focal	0.948	ncbi	phase 1 (NCBI candidates)
 tunicate	Ascidia mentula	38561	GCF_947561715.1	genome_annotation	yes	focal	0.95	ncbi	phase 1 (NCBI candidates)
 tunicate	Ascidiella aspersa	201961	GCF_963924565.1	genome_annotation	yes	focal	0.953	ncbi	phase 1 (NCBI candidates)
@@ -96,6 +99,7 @@ tunicate	Ciona intestinalis	7719	GCF_000224145.3	genome_annotation	yes	focal	0.9
 tunicate	Ciona robusta	1774208	GCF_009617815.1	genome_annotation	yes	focal	0.955	ncbi	
 tunicate	Clavelina lepadiformis	159417	GCF_947623445.1	genome_annotation	yes	focal	0.947	ncbi	phase 1 (NCBI candidates)
 tunicate	Corella eumyota	431183	GCF_963082875.1	genome_annotation	yes	focal	0.962	ncbi	phase 1 (NCBI candidates)
+tunicate	Halocynthia roretzi	7729	GKLY01000000	tsa	no	focal	0.918	cpgme	phase 1 gap; sea pineapple; no annotated genome (TSA, Trinity)
 tunicate	Phallusia mammillata	59560	GCF_965637545.1	genome_annotation	yes	focal	0.958	ncbi	phase 1 (NCBI candidates)
 tunicate	Styela clava	7725	GCF_964204865.1	genome_annotation	yes	focal	0.964	ncbi	invasive marine tunicate
 tunicate	Thalia democratica	34761	GCF_965202585.1	genome_annotation	yes	focal	0.892	ncbi	phase 1 (NCBI candidates)

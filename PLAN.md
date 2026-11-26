@@ -207,8 +207,19 @@ Settled:
   species.tsv (102 rows with the two transcriptome rows and two controls). Excluded: Corizus,
   Tegillarca (< 0.71), Aphis glycines, Chamelea, Cyamophila (0.787-0.792), A. digitifera,
   Oikopleura, Diaphorina (atypical) and non-scleractinian anthozoans.
+- Phase 1 transcriptome gaps (2026-11-26): seed species from section 2 with no annotated
+  genome were searched for NCBI TSA projects (scripts/tsa_search.py) and scored with the same
+  BUSCO rule on the longest ORF per contig. Added: *Corbicula fluminea* (GFYR01, 0.968),
+  *Dreissena rostriformis bugensis* (GHIX01, 0.920; GHRL01 0.745 not used), *Halocynthia
+  roretzi* (GKLY01, 0.918), *Sogatella furcifera* (GFWP01, 0.843). Below 0.80: *Montipora
+  capitata* (GFRO01, 0.650), *Pisaster ochraceus* (GAVN01, 0.431). No TSA: *Ostrea lurida*,
+  *Panopea generosa*, *Botrylloides leachii/violaceus*, *Didemnum vexillum*, *Pycnopodia
+  helianthoides*. Manifest: 106 rows. No coral TSA was added, so symbiont filtering is not
+  needed yet.
 
 Open:
 1. Whether transcriptome-only species are in scope for the first pass or deferred.
-2. Transcriptome (TSA) assemblies for gaps with no annotated genome (e.g. *Ostrea lurida*,
-   *Montipora capitata*, *Didemnum*, *Pycnopodia*): the rest of phase 1.
+2. The six coral species of the 2015 paper (for replication) are not identified in the
+   manifest yet; their transcriptomes would need symbiont filtering.
+3. Remaining gaps (no TSA, or TSA below BUSCO 0.80): unannotated genome assemblies would need
+   gene prediction, which is out of scope for now.

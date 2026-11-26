@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # BUSCO (protein mode, metazoa_odb10, as NCBI reports for RefSeq annotations) for candidate
 # genomes whose NCBI annotation has no BUSCO score. One protein per gene (longest CDS).
+# TSA project accessions (e.g. GCWQ01000000) are scored on the proteins of the longest ORF
+# per contig, as `cpgme run` calls them (contigs are not grouped into genes, so duplicated
+# BUSCOs run higher than for genomes).
 #
 # Usage:  scripts/busco_candidates.sh [ACCESSION ...]
 #         with no arguments: every include=check row in manifest/candidates.tsv
@@ -37,10 +40,15 @@ import gzip, shutil, sys
 from pathlib import Path
 from cpgme.fetch import fetch
 from cpgme.annotate import write_gene_proteins
+from cpgme.tsa import fetch_tsa, is_tsa, tsa_cds, write_proteins
 acc, faa = sys.argv[1], Path(sys.argv[2])
-f = fetch(acc, Path("data") / acc)
 gz = faa.with_suffix(".faa.gz")
-n = len(write_gene_proteins(f["CDS_FASTA"], f["PROT_FASTA"], gz, f["GENOME_GFF"]))
+if is_tsa(acc):
+    f = fetch_tsa(acc, Path("data") / acc)
+    n = len(write_proteins(tsa_cds(f["TSA_FASTA"]), gz))
+else:
+    f = fetch(acc, Path("data") / acc)
+    n = len(write_gene_proteins(f["CDS_FASTA"], f["PROT_FASTA"], gz, f["GENOME_GFF"]))
 with gzip.open(gz, "rb") as s, open(faa, "wb") as d:
     shutil.copyfileobj(s, d)
 gz.unlink()
