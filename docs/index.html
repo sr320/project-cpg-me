@@ -172,8 +172,9 @@
       <li><strong>CpG O/E</strong> = (n<sub>CG</sub> / (n<sub>C</sub> × n<sub>G</sub>)) × L² / (L − 1).
         GpC O/E is computed the same way as a composition control.</li>
       <li><strong>Mixtures.</strong> One- and two-component Gaussian mixtures per feature. A
-        distribution is called bimodal when BIC favours two components by more than 10
-        <em>and</em> Ashman's D (separation of the two modes) exceeds 2.</li>
+        distribution is called bimodal when BIC favours two components by more than 10,
+        Ashman's D (separation of the two modes) exceeds 2, <em>and</em> each component holds
+        at least 5 % of genes (so a few extreme outliers cannot form a "mode").</li>
       <li><strong>Function.</strong> eggNOG-mapper 2.1.13 (eggNOG 5.0.2) on one protein per
         gene; GO terms mapped to GO Slim (generic, plus response to stress, translation and
         signal transduction). Housekeeping vs inducible: one-sided Mann-Whitney test; genes in

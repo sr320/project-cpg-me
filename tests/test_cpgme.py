@@ -151,6 +151,15 @@ def test_watchdog_aborts_stalled_download(monkeypatch):
         fetch._copy_with_watchdog(Stalled(), io.BytesIO())
 
 
+def test_single_outlier_not_bimodal():
+    """One extreme gene gets a 2nd component of its own (huge Ashman's D); not bimodal."""
+    rng = np.random.default_rng(3)
+    x = np.append(rng.normal(0.85, 0.18, 12000), 54.7)
+    s, _ = fit_distribution(x)
+    assert s["ashman_d"] > 100 and min(s["low_weight"], s["high_weight"]) < 0.001
+    assert not s["bimodal"]
+
+
 def test_skewed_unimodal_large_n_not_bimodal():
     # A single skewed peak: BIC still prefers 2 components, but they overlap (D < 2).
     x = np.random.default_rng(0).gamma(9, 0.1, 15000)

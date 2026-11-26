@@ -1,8 +1,8 @@
 """Gaussian mixture fits to a CpG O/E distribution.
 
 Fits 1- and 2-component mixtures (as in Dimond & Roberts 2015, which used normalmixEM),
-calls bimodality when BIC favours 2 components and the modes are well separated
-(Ashman's D), and reports the low-CpG O/E component (historically heavily
+calls bimodality when BIC favours 2 components, the modes are well separated
+(Ashman's D) and each component holds a real share of genes, and reports the low-CpG O/E component (historically heavily
 methylated genes), the density intersection between components, and per-gene posterior
 probability of belonging to the low component.
 """
@@ -14,7 +14,10 @@ from sklearn.mixture import GaussianMixture
 
 SEED = 20151010  # fixed so every machine reproduces the same fit
 BIC_MIN = 10        # BIC(1) - BIC(2) must exceed this ...
-ASHMAN_D_MIN = 2.0  # ... and Ashman's D must exceed this to call a distribution bimodal
+ASHMAN_D_MIN = 2.0  # ... and Ashman's D must exceed this ...
+WEIGHT_MIN = 0.05   # ... and each component must hold at least this share of genes
+                    # (a handful of extreme outliers can otherwise get a component of their
+                    # own with a huge D, e.g. one gene body at CpG O/E 55 in Rhynocoris)
 
 
 def _fit(x: np.ndarray, k: int) -> GaussianMixture:
@@ -70,7 +73,8 @@ def fit_distribution(values: np.ndarray) -> tuple[dict, np.ndarray]:
         # BIC alone over-calls with >10k genes (any skew favours 2 components), so a
         # bimodal call also needs the modes to be well separated.
         "bimodal_bic": bool(bic1 - bic2 > BIC_MIN),
-        "bimodal": bool(bic1 - bic2 > BIC_MIN and ashman_d > ASHMAN_D_MIN),
+        "bimodal": bool(bic1 - bic2 > BIC_MIN and ashman_d > ASHMAN_D_MIN
+                        and w.min() >= WEIGHT_MIN),
         "low_mean": float(mu[low]), "low_sd": float(sd[low]), "low_weight": float(w[low]),
         "high_mean": float(mu[high]), "high_sd": float(sd[high]), "high_weight": float(w[high]),
         "ashman_d": ashman_d,
