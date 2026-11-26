@@ -5,7 +5,9 @@ Usage:  uv run python analysis/build_dashboard.py [--results results] [--out doc
                     few species on a machine without the full merged results)
 
 Only summaries go into the JSON (fits, binned histograms, GO Slim statistics, validation
-statistics), so the page stays small and no sequence data is published.
+statistics, covariate check), so the page stays small and no sequence data is published.
+The covariate check is read from analysis/covariate_check.tsv and covariate_check_wgbs.tsv
+(written by analysis/covariate_check.py) when they exist.
 """
 
 from __future__ import annotations
@@ -106,6 +108,40 @@ def species_record(d: Path, meta: dict) -> dict:
     return rec
 
 
+COV_KEYS = ["n_housekeeping", "n_inducible", "median_gc_hk", "median_gc_ind", "covariate_r2",
+            "rb_raw", "p_raw", "rb_residual", "p_residual", "frac_retained", "rb_gpc"]
+COV_WGBS_KEYS = ["dataset", "n_housekeeping", "n_inducible", "median_meth_hk",
+                 "median_meth_ind", "frac_methylated_hk", "frac_methylated_ind", "rb_meth",
+                 "p_meth", "rb_meth_adjusted", "p_meth_adjusted"]
+
+
+def add_covariates(species: list[dict], tsv: Path) -> int:
+    """Attach the covariate check (per feature) and its WGBS version to species records."""
+    by_acc = {s["accession"]: s for s in species}
+    n = 0
+    if tsv.exists():
+        with open(tsv) as fh:
+            for r in csv.DictReader(fh, delimiter="\t"):
+                s = by_acc.get(r["accession"])
+                if s is None:
+                    continue
+                s.setdefault("covariate", {})[r["feature"]] = {
+                    k: _val(k, float(r[k])) if k.startswith("p_") else
+                    (int(r[k]) if k.startswith("n_") else _r(float(r[k]))) for k in COV_KEYS}
+                n += 1
+    wtsv = tsv.with_name(tsv.stem + "_wgbs.tsv")
+    if wtsv.exists():
+        with open(wtsv) as fh:
+            for r in csv.DictReader(fh, delimiter="\t"):
+                s = by_acc.get(r["accession"])
+                if s is None:
+                    continue
+                s.setdefault("covariate_wgbs", []).append({
+                    k: r[k] if k == "dataset" else _val(k, float(r[k])) if k.startswith("p_") else
+                    (int(r[k]) if k.startswith("n_") else _r(float(r[k]))) for k in COV_WGBS_KEYS})
+    return n
+
+
 def goslim_terms(results: Path, species: list[dict]) -> dict:
     """{feature: {"terms": [...], "cells": [[term_idx, species_idx, shift, q, n, median]]}}"""
     out = {}
@@ -174,6 +210,7 @@ def main() -> None:
     ap.add_argument("--results", type=Path, default=Path("results"))
     ap.add_argument("--manifest", type=Path, default=Path("manifest/species.tsv"))
     ap.add_argument("--out", type=Path, default=Path("docs/data/dashboard.json"))
+    ap.add_argument("--covariates", type=Path, default=Path("analysis/covariate_check.tsv"))
     ap.add_argument("--merge", action="store_true",
                     help="keep species in the existing --out that are not in --results")
     a = ap.parse_args()
@@ -194,6 +231,10 @@ def main() -> None:
         species += kept
     species.sort(key=lambda s: (GROUP_ORDER.index(s["group"]) if s["group"] in GROUP_ORDER
                                 else 99, s["role"] != "focal", s["organism"]))
+    for s in species:  # recomputed below from the current TSVs
+        s.pop("covariate", None)
+        s.pop("covariate_wgbs", None)
+    n_cov = add_covariates(species, a.covariates)
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
                                 text=True, check=True).stdout.strip()
@@ -211,7 +252,7 @@ def main() -> None:
     a.out.write_text(json.dumps(data, separators=(",", ":")))
     n_val = sum(len(s.get("validation", [])) for s in species)
     print(f"{a.out}: {len(species)} species, {n_val} validation datasets, "
-          f"{a.out.stat().st_size / 1024:.0f} KB")
+          f"{n_cov} covariate rows, {a.out.stat().st_size / 1024:.0f} KB")
 
 
 if __name__ == "__main__":

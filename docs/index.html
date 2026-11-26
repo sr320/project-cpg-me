@@ -58,6 +58,55 @@
     </section>
   </div>
 
+  <section class="card" aria-labelledby="h-cov" id="cov-card" hidden>
+    <div class="card-head">
+      <h2 id="h-cov">Does the gap survive GC content and gene length?</h2>
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="Feature" id="cov-seg"></div>
+      </div>
+    </div>
+    <div class="explain">
+      <p>Housekeeping and inducible genes can differ in GC content and length, and both shape
+        CpG O/E without any methylation. Here CpG O/E is first adjusted for GC content and
+        length across all genes in the genome, and the housekeeping vs inducible comparison is
+        repeated on what is left. If the gap came from composition or length, the adjusted
+        effect would move to zero.</p>
+      <p id="cov-summary"></p>
+    </div>
+    <div class="cov-grid">
+      <div>
+        <p class="chart-title">Rank-biserial correlation, housekeeping vs inducible genes,
+          before and after adjustment. Below zero: housekeeping genes have lower CpG O/E.</p>
+        <div class="chart" id="cov-chart"></div>
+        <div class="legend" id="cov-legend"></div>
+      </div>
+      <div>
+        <p class="chart-title">Direct check with measured methylation (WGBS, gene body). Are
+          housekeeping genes actually more methylated?</p>
+        <div id="cov-wgbs"></div>
+      </div>
+    </div>
+    <details class="explain">
+      <summary>How this was done</summary>
+      <ul>
+        <li><strong>Adjustment</strong>: over all genes passing the filter, CpG O/E is regressed
+          on GC, GC², log length, its square and GC × log length. Housekeeping and inducible
+          genes are then compared on the residuals with the same one-sided Mann-Whitney test
+          and rank-biserial correlation as the original test.</li>
+        <li><strong>Composition control</strong>: the same test on GpC O/E, which reflects base
+          composition but not CpG loss to methylation. Hover a species to see it; it shows no
+          consistent housekeeping-lower gap.</li>
+        <li><strong>Why the adjustment can over-correct</strong>: methylated CpGs mutate to TpG
+          over time, which lowers GC. Where heavily methylated genes are also AT-rich, as in the
+          honey bee, adjusting for GC removes part of the methylation signal itself. The WGBS
+          check avoids this: it compares measured methylation directly, and repeats that
+          comparison after the same GC and length adjustment.</li>
+        <li>Expression breadth is not included: it needs RNA-seq across tissues for every
+          species. Code: <code>analysis/covariate_check.py</code>.</li>
+      </ul>
+    </details>
+  </section>
+
   <section class="card" aria-labelledby="h-goslim">
     <div class="card-head">
       <h2 id="h-goslim">GO Slim terms</h2>

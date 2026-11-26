@@ -3,7 +3,7 @@
   "use strict";
   const SVG = "http://www.w3.org/2000/svg";
   const FEATURE_LABEL = { cds: "CDS", gene_body: "Gene body", upstream: "Upstream 1 kb" };
-  const state = { data: null, species: null, feature: "gene_body", goslimFeature: "gene_body",
+  const state = { data: null, species: null, feature: "gene_body", goslimFeature: "gene_body", covFeature: "gene_body",
                   sortKey: null, sortDir: 1 };
   const $ = (id) => document.getElementById(id);
   const tip = $("tooltip");
@@ -31,6 +31,8 @@
     return p.toFixed(p < 0.01 ? 3 : 2);
   };
   const pdf = (x, mu, sd, w) => (w * Math.exp(-0.5 * ((x - mu) / sd) ** 2)) / (sd * Math.sqrt(2 * Math.PI));
+  // Narrow charts: "Drosophila melanogaster" -> "D. melanogaster".
+  const spName = (name, W) => (W < 520 ? name.replace(/^([A-Z])[a-z]+ /, "$1. ") : name);
   const bestFeature = (sp) => (sp.fits.gene_body ? "gene_body" : "cds");
 
   function showTip(evt, rows) {
@@ -284,13 +286,13 @@
       svg.append(sv("line", { x1: X(tt), x2: X(tt), y1: m.t, y2: H - m.b, stroke: tt === 0 ? css("--axis") : css("--grid"), "stroke-width": tt === 0 ? 1.5 : 1 }));
       if (Math.abs(tt * 10) % 2 === 0) svg.append(sv("text", { x: X(tt), y: H - 12, "text-anchor": "middle", class: "tick-label" }, (tt > 0 ? "+" : "") + tt.toFixed(1)));
     }
-    svg.append(sv("text", { x: X(lo), y: H, "text-anchor": "start" }, "← housekeeping lower"));
+    svg.append(sv("text", { x: X(lo), y: H, "text-anchor": "start" }, W < 520 ? "← HK lower" : "← housekeeping lower"));
     svg.append(sv("text", { x: X(hi), y: H, "text-anchor": "end" }, "higher →"));
     const series = [["gene_body", css("--series-1"), "Gene body"], ["cds", css("--series-2"), "CDS"]];
     sp.forEach((s, i) => {
       const y = m.t + rowH * i + rowH / 2;
       const lab = sv("text", { x: m.l - 8, y: y + 4, "text-anchor": "end", class: "ink2" });
-      lab.append(sv("tspan", { "font-style": "italic" }, s.organism));
+      lab.append(sv("tspan", { "font-style": "italic" }, spName(s.organism, W)));
       svg.append(lab);
       svg.append(sv("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: css("--grid"), "stroke-dasharray": "1 3" }));
       const pts = series.map(([f]) => s.goslim_test[f]?.rank_biserial).filter((v) => v != null);
@@ -318,6 +320,128 @@
       s.append(k, label);
       lg.append(s);
     }
+  }
+
+  // ---------- covariate check ----------
+  const signed = (x) => (x == null ? "–" : (x > 0 ? "+" : "") + fmt(x));
+  function renderCov() {
+    const d = state.data, card = $("cov-card");
+    const all = d.species.filter((s) => s.covariate);
+    if (!all.length) { card.hidden = true; return; }
+    card.hidden = false;
+    const has = (f) => all.some((s) => s.covariate[f]);
+    if (!has(state.covFeature)) state.covFeature = has("gene_body") ? "gene_body" : "cds";
+    const f = state.covFeature;
+    segmented($("cov-seg"), [["gene_body", "Gene body", has("gene_body")], ["cds", "CDS", has("cds")]],
+      f, (k) => { state.covFeature = k; renderCov(); });
+    const sp = all.filter((s) => s.covariate[f]);
+
+    // summary: focal species with a significant raw gap, and how many keep it after adjustment
+    const withGap = sp.filter((s) => s.covariate[f].rb_raw < 0 && s.covariate[f].p_raw < 0.05);
+    const kept = withGap.filter((s) => s.covariate[f].rb_residual < 0 && s.covariate[f].p_residual < 0.05);
+    const lost = withGap.filter((s) => !kept.includes(s)).map((s) => s.organism);
+    const sum = $("cov-summary");
+    sum.replaceChildren(el("strong", {}, "Result: "),
+      `in ${kept.length} of ${withGap.length} species with a housekeeping-lower gap (${f === "cds" ? "CDS" : "gene body"}), the gap stays significant after adjustment` +
+      (lost.length ? `; it does not in ${lost.length > 1 ? lost.slice(0, -1).join(", ") + " and " + lost.at(-1) : lost[0]}. ` : ". ") +
+      "Where WGBS is available, housekeeping genes are directly and far more methylated, before and after the same adjustment.");
+
+    // dumbbell: before (hollow) -> after (filled)
+    const box = $("cov-chart"), W = Math.max(300, box.clientWidth);
+    const rowH = 24, labelW = Math.min(190, W * 0.42);
+    const m = { l: labelW, r: 16, t: 8, b: 30 }, H = m.t + m.b + rowH * sp.length, iw = W - m.l - m.r;
+    const vals = sp.flatMap((s) => [s.covariate[f].rb_raw, s.covariate[f].rb_residual]).filter((v) => v != null);
+    const lo = Math.min(-0.5, Math.floor(Math.min(...vals) * 10) / 10), hi = Math.max(0.2, Math.ceil(Math.max(...vals) * 10) / 10);
+    const X = (x) => m.l + ((x - lo) / (hi - lo)) * iw;
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img",
+      "aria-label": `Housekeeping vs inducible rank-biserial before and after GC and length adjustment, ${FEATURE_LABEL[f]}` });
+    for (let t = Math.ceil(lo * 10) / 10; t <= hi + 1e-9; t += 0.1) {
+      const tt = Math.round(t * 10) / 10;
+      svg.append(sv("line", { x1: X(tt), x2: X(tt), y1: m.t, y2: H - m.b, stroke: tt === 0 ? css("--axis") : css("--grid"), "stroke-width": tt === 0 ? 1.5 : 1 }));
+      if (Math.abs(tt * 10) % 2 === 0) svg.append(sv("text", { x: X(tt), y: H - 12, "text-anchor": "middle", class: "tick-label" }, (tt > 0 ? "+" : "") + tt.toFixed(1)));
+    }
+    svg.append(sv("text", { x: X(lo), y: H, "text-anchor": "start" }, W < 520 ? "← HK lower" : "← housekeeping lower"));
+    svg.append(sv("text", { x: X(hi), y: H, "text-anchor": "end" }, "higher →"));
+    const cBefore = css("--ink-2"), cAfter = css("--series-1");
+    sp.forEach((s, i) => {
+      const c = s.covariate[f], y = m.t + rowH * i + rowH / 2;
+      const lab = sv("text", { x: m.l - 8, y: y + 4, "text-anchor": "end", class: "ink2" });
+      lab.append(sv("tspan", { "font-style": "italic" }, spName(s.organism, W)));
+      if (s.role !== "focal") lab.append(sv("tspan", {}, " (control)"));
+      svg.append(lab);
+      svg.append(sv("line", { x1: m.l, x2: W - m.r, y1: y, y2: y, stroke: css("--grid"), "stroke-dasharray": "1 3" }));
+      svg.append(sv("line", { x1: X(c.rb_raw), x2: X(c.rb_residual), y1: y, y2: y, stroke: css("--axis"), "stroke-width": 2 }));
+      svg.append(sv("circle", { cx: X(c.rb_raw), cy: y, r: 4.5, fill: css("--surface"), stroke: cBefore, "stroke-width": 1.5 }));
+      svg.append(sv("circle", { cx: X(c.rb_residual), cy: y, r: 5, fill: cAfter, stroke: css("--surface"), "stroke-width": 2 }));
+      const x0 = Math.min(X(c.rb_raw), X(c.rb_residual)) - 10, x1 = Math.max(X(c.rb_raw), X(c.rb_residual)) + 10;
+      const hit = sv("rect", { x: x0, y: y - rowH / 2, width: x1 - x0, height: rowH, fill: "transparent" });
+      hoverable(hit, () => [
+        { l: `${s.organism} · ${FEATURE_LABEL[f]}` + (s.role === "control_unmethylated" ? " · unmethylated control"
+          : s.role === "control_methylated" ? " · methylated control" : "") },
+        { v: signed(c.rb_raw), l: `before adjustment · p ${fmtP(c.p_raw)}` },
+        { key: cAfter, v: signed(c.rb_residual), l: `after GC and length · p ${fmtP(c.p_residual)}` },
+        { v: `${fmt(c.median_gc_hk)} vs ${fmt(c.median_gc_ind)}`, l: "median GC, HK vs IND" },
+        { v: `${Math.round(c.covariate_r2 * 100)} %`, l: "of CpG O/E variance explained by GC and length" },
+        { v: signed(c.rb_gpc), l: "GpC O/E control (composition only)" },
+      ]);
+      svg.append(hit);
+    });
+    box.replaceChildren(svg);
+    const lg = $("cov-legend");
+    lg.replaceChildren();
+    const a = el("span"), ka = el("span", { class: "key-dot" });
+    ka.style.background = "transparent"; ka.style.border = `1.5px solid ${cBefore}`;
+    a.append(ka, "Before adjustment");
+    const b = el("span"), kb = el("span", { class: "key-dot" });
+    kb.style.background = cAfter;
+    b.append(kb, "After GC and length adjustment");
+    lg.append(a, b);
+
+    // WGBS direct check
+    const wbox = $("cov-wgbs");
+    wbox.replaceChildren();
+    // One row per study: samples from the same project (e.g. eight female gonads) are merged,
+    // with ranges for their values.
+    const groups = new Map();
+    for (const s of d.species) {
+      const src = Object.fromEntries((s.validation || []).map((v) => [v.label, v.source || ""]));
+      for (const w of s.covariate_wgbs || []) {
+        const desc = (src[w.dataset] || w.dataset).split(";")[0].replace(/\s*WGBS\b/, "").replace(/, sample .*$/, "");
+        const key = `${s.accession}|${desc}`;
+        if (!groups.has(key)) groups.set(key, { s, desc, ws: [] });
+        groups.get(key).ws.push(w);
+      }
+    }
+    if (!groups.size) { wbox.append(el("p", { class: "empty" }, "No WGBS datasets.")); return; }
+    const wrap = el("div", { class: "table-scroll" }), t = el("table", { class: "data compact" });
+    const head = ["Dataset", "Median meth HK / IND", "Methylated HK / IND", "Effect", "Adjusted"];
+    const thead = el("thead"), hr = el("tr");
+    head.forEach((h, i) => hr.append(el("th", { scope: "col", class: i >= 1 ? "num" : "" }, h)));
+    thead.append(hr);
+    const tb = el("tbody");
+    const range = (ws, k, f) => {
+      const v = ws.map((w) => w[k]).filter((x) => x != null);
+      const lo = Math.min(...v), hi = Math.max(...v);
+      return f(lo) === f(hi) ? f(lo) : lo < 0 ? `${f(lo)} to ${f(hi)}` : `${f(lo)}–${f(hi)}`;
+    };
+    const pct = (x) => `${Math.round(x * 100)}`;
+    for (const { s, desc, ws } of groups.values()) {
+      const tr = el("tr");
+      const ds = el("td");
+      const what = ws.length > 1 ? `${desc}, ${ws.length} samples`
+        : desc.includes(ws[0].dataset.split("_")[0]) ? desc : `${desc} (${ws[0].dataset})`;
+      ds.append(el("span", { class: "sp" }, s.organism), el("div", { class: "sub" }, what));
+      tr.append(ds);
+      [[`${range(ws, "median_meth_hk", fmt)} / ${range(ws, "median_meth_ind", fmt)}`, "num"],
+        [`${range(ws, "frac_methylated_hk", pct)} / ${range(ws, "frac_methylated_ind", pct)} %`, "num"],
+        [range(ws, "rb_meth", signed), "num"], [range(ws, "rb_meth_adjusted", signed), "num"]]
+        .forEach(([txt, cls]) => tr.append(el("td", { class: cls }, txt)));
+      tr.title = ws.map((w) => `${w.dataset}: p ${fmtP(w.p_meth)} before, ${fmtP(w.p_meth_adjusted)} after adjustment; n ${w.n_housekeeping} / ${w.n_inducible}`).join("\n");
+      tb.append(tr);
+    }
+    t.append(thead, tb);
+    wrap.append(t);
+    wbox.append(wrap, el("p", { class: "note" }, "HK: housekeeping, IND: inducible genes. Methylated: share of genes with methylation ≥ 0.5. Effect: rank-biserial correlation of measured methylation; below zero, housekeeping genes are more methylated. Adjusted: the same after GC and length adjustment. Hover a row for p-values."));
   }
 
   // ---------- GO Slim heatmap ----------
@@ -424,6 +548,7 @@
     renderTable();
     renderDist();
     renderEffect();
+    renderCov();
     renderHeat();
     renderValidation();
   }
@@ -440,7 +565,7 @@
       sel.value = state.species;
       renderAll();
       let t;
-      window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderDist(); renderEffect(); }, 150); });
+      window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderDist(); renderEffect(); renderCov(); }, 150); });
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
     })
     .catch((e) => {

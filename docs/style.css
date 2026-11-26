@@ -154,3 +154,10 @@ table.data td .sub { color: var(--muted); font-size: 12px; white-space: normal; 
 .explain summary { cursor: pointer; color: var(--accent); font-size: 13px; }
 .explain ul { margin: 6px 0 0; padding-left: 18px; }
 .explain li { margin: 4px 0; }
+.cov-grid { margin-top: 8px; display: grid; gap: 16px; }
+.cov-grid > div { min-width: 0; }
+.cov-grid #cov-chart { max-width: 760px; }
+.cov-grid table.data { width: auto; }
+table.data.compact tbody tr { cursor: default; }
+table.data.compact th, table.data.compact td { padding: 5px 8px; }
+details.explain { margin-top: 8px; }

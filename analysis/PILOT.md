@@ -185,8 +185,8 @@ settings on Raven. GO Slim test, housekeeping (HK) vs inducible (IND):
 
 1. ~~WGBS validation~~ (done for *M. gigas* and *Apis*, see "WGBS validation" below). It is
    strong and consistent across ten datasets, so no further WGBS validation is planned.
-2. A covariate check: does the housekeeping/inducible gap survive controlling for GC content,
-   gene length and expression breadth?
+2. ~~Covariate check~~ (done for GC content and gene length, see "Covariate check" below).
+   Expression breadth would need RNA-seq across tissues for every species.
 3. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).
 
 ## Five more bivalves (2026-11-23)
@@ -332,3 +332,57 @@ CDS gives the same picture, slightly weaker (*M. gigas* ρ −0.63 to −0.65, A
 
 Per-sample results: `results/<accession>/validation/<label>/validation.json` and the
 dashboard's validation table.
+
+## Covariate check: GC content and gene length (2026-11-25)
+
+eggNOG-mapper and the GO Slim test now cover all 19 genome species (the five bivalves,
+*Laodelphax* and *Macrosteles* were annotated on Raven). Housekeeping and inducible genes can
+differ in GC content and length, which shape CpG O/E without methylation, so
+`analysis/covariate_check.py` repeats the 2015 test after adjusting for them: CpG O/E is
+regressed on GC, GC², log length, its square and GC × log length over all genes, and
+housekeeping and inducible genes are compared on the residuals. Rank-biserial, gene body
+(below zero: housekeeping lower):
+
+| Species | Before | After | GpC O/E control |
+|---|---|---|---|
+| *Mercenaria mercenaria* | −0.44 | −0.43 | −0.28 |
+| *Crassostrea virginica* | −0.41 | −0.43 | −0.06 |
+| *Dreissena polymorpha* | −0.41 | −0.42 | −0.19 |
+| *Mytilus edulis* | −0.40 | −0.45 | −0.04 |
+| *Magallana gigas* | −0.39 | −0.41 | 0.00 |
+| *Stylophora pistillata* | −0.39 | −0.38 | −0.15 |
+| *Apis mellifera* (control) | −0.39 | −0.10 | +0.20 |
+| *Lycorma delicatula* | −0.37 | −0.25 | +0.20 |
+| *Ostrea edulis* | −0.37 | −0.39 | −0.01 |
+| *Acropora millepora* | −0.36 | −0.33 | −0.09 |
+| *Styela clava* | −0.36 | −0.37 | −0.05 |
+| *Pecten maximus* | −0.34 | −0.42 | +0.04 |
+| *Acanthaster planci* | −0.23 | −0.36 | −0.04 |
+| *Ciona robusta* | −0.22 | −0.20 | +0.05 |
+| *Asterias rubens* | −0.16 | −0.19 | +0.13 |
+| *Macrosteles quadrilineatus* | −0.15 | −0.07 | +0.19 |
+| *Nilaparvata lugens* | +0.05 | +0.06 | +0.17 |
+| *Laodelphax striatellus* | +0.01 | +0.04 | +0.09 |
+| *Drosophila melanogaster* (control) | +0.12 | +0.18 | −0.02 |
+
+- The gap survives in all 16 species that have one (gene body; all p < 0.001 after
+  adjustment). GC and length explain 2–44 % of CpG O/E variance, and housekeeping and
+  inducible genes have nearly the same median GC in most species. For CDS it survives in
+  15 of 17; not in *Apis* or *Laodelphax* (whose raw CDS gap is tiny, −0.06).
+- GpC O/E, which reflects composition but not CpG loss to methylation, shows no consistent
+  housekeeping-lower gap (−0.28 to +0.20). *Mercenaria* has the largest composition gap in
+  gene bodies, but its CpG gap is unchanged by the adjustment.
+- *Apis* is the exception: housekeeping genes are AT-rich there (median GC 0.24 vs 0.27) and
+  the adjustment cuts the gap to a quarter. WGBS settles it. In sperm, housekeeping genes are
+  directly far more methylated (median 0.31 vs 0.03; rank-biserial −0.48, and −0.19 after the
+  same adjustment). Methylated CpGs mutate to TpG over time and lower GC, so adjusting for
+  GC removes part of the methylation signal itself.
+- In *M. gigas*, measured methylation is much higher in housekeeping genes in all nine
+  datasets (median 0.57–0.66 vs 0.04–0.06), and slightly more so after adjustment.
+- New GO Slim results: the five bivalves all show strong gaps (gene body −0.34 to −0.44).
+  *Laodelphax*, a delphacid planthopper like *N. lugens*, has no gap; together they suggest
+  the flat profile is a planthopper (Delphacidae) trait. *Macrosteles* (leafhopper) has a weak
+  gap that roughly halves after adjustment but stays significant.
+
+Outputs: `analysis/covariate_check.tsv`, `covariate_check_wgbs.tsv`, and the dashboard card
+"Does the gap survive GC content and gene length?".
