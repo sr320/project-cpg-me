@@ -198,6 +198,17 @@ Settled:
   `manifest/machines.tsv`.
 - Participating machines are hete, chlo, raven and klone (2026-11-23): four shards, with
   large genomes, eggNOG-mapper, OrthoFinder and the merge on Raven.
+- Phase 1 genome manifest (2026-11-26): `cpgme candidates` lists every current annotated
+  NCBI assembly in Scleractinia, Bivalvia, Hemiptera, Tunicata and Asteroidea, one per
+  species (manifest/candidates.tsv, 113 species). Inclusion: BUSCO metazoa_odb10 completeness
+  of the annotation >= 0.80, from the NCBI report or, for GenBank annotations NCBI does not
+  score, from scripts/busco_candidates.sh (protein mode, one protein per gene; reads about
+  0-4 points below NCBI's own scores on two calibration species). 98 pass and are merged into
+  species.tsv (102 rows with the two transcriptome rows and two controls). Excluded: Corizus,
+  Tegillarca (< 0.71), Aphis glycines, Chamelea, Cyamophila (0.787-0.792), A. digitifera,
+  Oikopleura, Diaphorina (atypical) and non-scleractinian anthozoans.
 
 Open:
 1. Whether transcriptome-only species are in scope for the first pass or deferred.
+2. Transcriptome (TSA) assemblies for gaps with no annotated genome (e.g. *Ostrea lurida*,
+   *Montipora capitata*, *Didemnum*, *Pycnopodia*): the rest of phase 1.

@@ -10,7 +10,8 @@ upstream   1 kb upstream of the gene on its own strand, clipped at sequence ends
 
 Gene IDs are NCBI GeneIDs ("GeneID:12345"), which link CDS records to GFF genes. Submitter
 (GenBank) annotations often have no GeneID; they fall back to the locus tag
-("locus_tag:ABC_00001"), which both the CDS headers and the GFF genes carry.
+("locus_tag:ABC_00001"), which the GFF genes carry. Some GenBank CDS FASTA headers carry
+neither a GeneID nor a locus tag; their gene is then looked up by protein_id in the GFF.
 """
 
 from __future__ import annotations
@@ -38,15 +39,39 @@ def _gene_id_from_cds_header(tags: dict[str, str]) -> str | None:
     return None
 
 
-def longest_cds(cds_fasta: Path) -> dict[str, dict]:
-    """Return {gene_id: {"seq", "transcript", "protein_id", "gene", "n_isoforms"}}."""
+def protein_gene_ids(gff: Path) -> dict[str, str]:
+    """{protein_id: gene_id} from the GFF CDS rows (GeneID, else locus tag), for CDS FASTA
+    headers that carry no gene identifier."""
+    out: dict[str, str] = {}
+    for rec in read_gff(gff, {"CDS"}):
+        a = rec["attrs"]
+        pid = a.get("protein_id")
+        if not pid or pid in out:
+            continue
+        gid = next((x for x in a.get("Dbxref", "").split(",") if x.startswith("GeneID:")), None)
+        if gid is None and a.get("locus_tag"):
+            gid = f"locus_tag:{a['locus_tag']}"
+        if gid:
+            out[pid] = gid
+    return out
+
+
+def longest_cds(cds_fasta: Path, gff: Path | None = None) -> dict[str, dict]:
+    """Return {gene_id: {"seq", "transcript", "protein_id", "gene", "n_isoforms"}}.
+    With `gff`, CDS records whose header has no gene identifier are assigned to a gene via
+    their protein_id."""
     best: dict[str, dict] = {}
     n_iso: dict[str, int] = defaultdict(int)
+    by_protein: dict[str, str] | None = None
     for header, seq in read_fasta(cds_fasta):
         tags = dict(TAG.findall(header))
         if tags.get("pseudo") == "true":
             continue
         gid = _gene_id_from_cds_header(tags)
+        if gid is None and gff is not None and tags.get("protein_id"):
+            if by_protein is None:
+                by_protein = protein_gene_ids(gff)
+            gid = by_protein.get(tags["protein_id"])
         if gid is None:
             continue
         n_iso[gid] += 1

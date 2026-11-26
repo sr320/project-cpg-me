@@ -175,3 +175,23 @@ def test_locus_tag_fallback_for_genbank_annotation(tmp_path):
     assert best["locus_tag:LS_001"]["protein_id"] == "RZF2.1"
     genes = protein_coding_genes(gff)
     assert [g["gene_id"] for g in genes["s1"]] == ["locus_tag:LS_001"]
+
+
+def test_longest_cds_gene_from_gff(tmp_path):
+    """GenBank CDS headers without GeneID or locus tag: gene found via protein_id in the GFF."""
+    cds = tmp_path / "cds.fna"
+    cds.write_text(
+        ">lcl|c1_cds_KAL1.1_1 [protein_id=KAL1.1] [gbkey=CDS]\nATGCGA\n"
+        ">lcl|c1_cds_KAL2.1_2 [protein_id=KAL2.1] [gbkey=CDS]\nATGCGACGTTAA\n"
+        ">lcl|c1_cds_KAL3.1_3 [protein_id=KAL3.1] [gbkey=CDS]\nATGTAA\n")
+    gff = tmp_path / "g.gff"
+    gff.write_text(
+        "c1\tGenbank\tCDS\t1\t6\t.\t+\t0\tID=cds-KAL1.1;locus_tag=AB_001;protein_id=KAL1.1\n"
+        "c1\tGenbank\tCDS\t1\t12\t.\t+\t0\tID=cds-KAL2.1;locus_tag=AB_001;protein_id=KAL2.1\n"
+        "c1\tGenbank\tCDS\t30\t35\t.\t+\t0\tID=cds-KAL3.1;locus_tag=AB_002;protein_id=KAL3.1\n")
+    from cpgme.features import longest_cds
+    assert longest_cds(cds) == {}
+    best = longest_cds(cds, gff)
+    assert set(best) == {"locus_tag:AB_001", "locus_tag:AB_002"}
+    assert best["locus_tag:AB_001"]["protein_id"] == "KAL2.1"
+    assert best["locus_tag:AB_001"]["n_isoforms"] == 2

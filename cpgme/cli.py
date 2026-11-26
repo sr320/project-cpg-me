@@ -1,4 +1,4 @@
-"""Command line: cpgme run | run-shard | status | annotate | validate."""
+"""Command line: cpgme run | run-shard | status | annotate | validate | candidates."""
 
 from __future__ import annotations
 
@@ -70,7 +70,21 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--min-cpgs", type=int, default=5)
     p.add_argument("--meth-threshold", type=float, default=0.5)
 
+    p = sub.add_parser("candidates", help="list annotated NCBI genomes per focal group "
+                                          "for manifest review (phase 1)")
+    p.add_argument("--manifest", type=Path, default=DEFAULT_MANIFEST)
+    p.add_argument("--out", type=Path, default=Path("manifest/candidates.tsv"))
+    p.add_argument("--busco", type=Path, default=Path("manifest/busco.tsv"),
+                   help="BUSCO scores from scripts/busco_candidates.sh")
+
     args = ap.parse_args(argv)
+
+    if args.cmd == "candidates":
+        from .manifest import candidates, write
+        rows = candidates(manifest=args.manifest, busco=args.busco)
+        write(rows, args.out)
+        print(f"{args.out}: {len(rows)} species")
+        return 0
 
     if args.cmd == "validate":
         from .validate import validate

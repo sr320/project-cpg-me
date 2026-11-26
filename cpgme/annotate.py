@@ -184,10 +184,11 @@ def ensure_ontology(cache: Path) -> tuple[Path, Path]:
 
 # ---- proteins and eggNOG -------------------------------------------------------------
 
-def write_gene_proteins(cds_fasta: Path, prot_fasta: Path, out: Path) -> dict[str, str]:
+def write_gene_proteins(cds_fasta: Path, prot_fasta: Path, out: Path,
+                        gff: Path | None = None) -> dict[str, str]:
     """Write the longest-CDS protein for each gene with header '>gene_id protein_id'.
     Returns {gene_id: protein_id} for the genes written."""
-    want = {rec["protein_id"]: gid for gid, rec in longest_cds(cds_fasta).items()
+    want = {rec["protein_id"]: gid for gid, rec in longest_cds(cds_fasta, gff).items()
             if rec["protein_id"]}
     written: dict[str, str] = {}
     with gzip.open(out, "wt") as fh:
@@ -369,7 +370,8 @@ def annotate(accession: str, results_dir: Path, data_dir: Path,
         files = fetch(accession, Path(data_dir) / accession, genome=False)
         if "PROT_FASTA" not in files:
             raise ValueError(f"{accession}: NCBI package has no protein FASTA")
-        gene_protein = write_gene_proteins(files["CDS_FASTA"], files["PROT_FASTA"], proteins)
+        gene_protein = write_gene_proteins(files["CDS_FASTA"], files["PROT_FASTA"], proteins,
+                                           files.get("GENOME_GFF"))
     log(f"{accession}: {len(gene_protein)} proteins -> {proteins}")
     if proteins_only:
         return proteins

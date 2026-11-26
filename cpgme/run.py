@@ -93,7 +93,7 @@ def run(accession: str, results_dir: Path, data_dir: Path, genome: bool = False,
         log(f"{accession}: fetching ({'with' if genome else 'without'} genome)")
         files = fetch(accession, Path(data_dir) / accession, genome=genome)
         log(f"{accession}: longest CDS per gene")
-        cds = longest_cds(files["CDS_FASTA"])
+        cds = longest_cds(files["CDS_FASTA"], files.get("GENOME_GFF"))
         for gid, rec in cds.items():
             rows.append(_row(gid, rec["gene"], "cds", count(rec["seq"])))
         tier = {"source_tier": "genome_annotation",

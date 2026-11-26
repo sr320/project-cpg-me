@@ -1,0 +1,115 @@
+# Candidate annotated genomes from NCBI Datasets, one per species. include=yes: BUSCO complete >= 80%; check: no BUSCO score yet. busco_source=cpgme: scored here, protein mode, one protein per gene.
+group	species	taxid	accession	source	annotation_provider	annotation_date	busco_source	busco_lineage	busco_complete	busco_fragmented	protein_coding_genes	assembly_level	contig_n50	genome_mb	n_annotated_assemblies	atypical	in_manifest	include	reason
+coral	Acropora cervicornis	6130	GCA_032359415.1	genbank	Northeastern University	2023-10-04	cpgme	metazoa_odb10	0.822	0.089	28059	Scaffold	2711204	307.4	1			yes	
+coral	Acropora digitifera	70779	GCF_000222465.1	refseq	NCBI RefSeq	2016-03-10	ncbi	metazoa_odb10	0.775	0.102	26073	Scaffold	10912	447.5	1			no	BUSCO complete < 80%
+coral	Acropora millepora	45264	GCF_013753865.1	refseq	NCBI RefSeq	2021-10-01	ncbi	metazoa_odb10	0.965	0.008	30136	Chromosome	1091365	475.4	2		same_accession	yes	
+coral	Acropora muricata	159855	GCF_036669905.1	refseq	NCBI RefSeq	2024-08-07	ncbi	metazoa_odb10	0.964	0.008	26093	Chromosome	1517898	487.3	1			yes	
+coral	Acropora palmata	6131	GCF_964030605.1	refseq	NCBI RefSeq	2025-06-18	ncbi	metazoa_odb10	0.969	0.009	21010	Chromosome	1777896	333.9	1			yes	
+coral	Cyphastrea microphthalma	570133	GCA_059441185.1	genbank	Coral Global Search	2026-07-15	cpgme	metazoa_odb10	0.943	0.019	24706	Scaffold	266656	681.2	1			yes	
+coral	Desmophyllum pertusum	174260	GCA_990048955.1	genbank	Genoscope CEA	2026-10-24	cpgme	metazoa_odb10	0.957	0.015	27064	Contig	2733900	574.0	2			yes	
+coral	Madrepora oculata	213639	GCA_990048195.1	genbank	Genoscope CEA	2026-10-24	cpgme	metazoa_odb10	0.956	0.017	29151	Contig	1175471	585.5	1			yes	
+coral	Montipora capricornis	246305	GCF_036669925.1	refseq	NCBI RefSeq	2024-09-25	ncbi	metazoa_odb10	0.964	0.008	32425	Chromosome	826617	809.3	1			yes	
+coral	Montipora foliosa	591990	GCF_036669935.1	refseq	NCBI RefSeq	2024-09-27	ncbi	metazoa_odb10	0.965	0.009	31642	Chromosome	1034910	789.3	1			yes	
+coral	Oculina patagonica	130080	GCF_052425735.1	refseq	NCBI RefSeq	2025-12-31	ncbi	metazoa_odb10	0.977	0.008	31718	Chromosome	838847	529.4	2			yes	
+coral	Orbicella faveolata	48498	GCF_042242905.1	refseq	NCBI RefSeq	2026-10-05	ncbi	metazoa_odb10	0.975	0.009	30364	Contig	33295526	493.9	2			yes	
+coral	Orbicella franksi	48499	GCF_964199315.1	refseq	NCBI RefSeq	2026-03-17	ncbi	metazoa_odb10	0.966	0.016	28073	Chromosome	10871726	497.0	1			yes	
+coral	Pavona decussata	227230	GCF_977016875.1	refseq	NCBI RefSeq	2026-06-04	ncbi	metazoa_odb10	0.97	0.009	30878	Contig	3067493	602.2	1			yes	
+coral	Pocillopora damicornis	46731	GCF_964200805.1	refseq	NCBI RefSeq	2026-09-30	ncbi	metazoa_odb10	0.971	0.014	30701	Chromosome	11523791	380.6	3			yes	
+coral	Pocillopora meandrina	46732	GCA_942486045.1	genbank	Genoscope CEA	2023-05-12	cpgme	metazoa_odb10	0.948	0.025	32095	Contig	4753879	347.2	1			yes	
+coral	Pocillopora verrucosa	203993	GCF_030620025.1	refseq	NCBI RefSeq	2023-08-21	ncbi	metazoa_odb10	0.973	0.009	26915	Contig	519438	356.9	2			yes	
+coral	Porites evermanni	104178	GCA_942486025.1	genbank	Genoscope CEA	2023-05-12	cpgme	metazoa_odb10	0.927	0.032	40380	Scaffold	33681	603.8	1			yes	
+coral	Porites harrisoni	627007	GCA_040938025.2	genbank	Coral Global Search	2026-01-21	cpgme	metazoa_odb10	0.825	0.024	23672	Contig	807480	626.7	1			yes	
+coral	Porites lobata	104759	GCA_942486035.1	genbank	Genoscope CEA	2023-05-12	cpgme	metazoa_odb10	0.95	0.018	42872	Contig	2154615	646.2	1			yes	
+coral	Porites lutea	51062	GCF_958299795.1	refseq	NCBI RefSeq	2025-04-10	ncbi	metazoa_odb10	0.966	0.01	26672	Chromosome	3486875	541.6	1			yes	
+coral	Stylophora pistillata	50429	GCF_964205215.1	refseq	NCBI RefSeq	2026-09-16	ncbi	metazoa_odb10	0.978	0.008	35391	Chromosome	9455107	560.5	4		same_accession	yes	
+anthozoa_other	Actinia tenebrosa	6105	GCF_029948245.1	refseq	NCBI RefSeq	2026-09-24	ncbi	metazoa_odb10	0.978	0.008	24789	Scaffold	716361	312.8	2			no	not a stony coral; review only
+anthozoa_other	Actinostola sp. cb2023	3060491	GCA_033675265.1	genbank	BGI-SZ	2023-11-15					20812	Scaffold	378892	424.3	1			no	not a stony coral; review only
+anthozoa_other	Dendronephthya gigantea	151771	GCF_004324835.1	refseq	NCBI RefSeq	2019-03-27	ncbi	metazoa_odb10	0.943	0.008	22045	Contig	1445523	286.1	1			no	not a stony coral; review only
+anthozoa_other	Exaiptasia diaphana	2652724	GCF_001417965.1	refseq	NCBI RefSeq	2023-11-03	ncbi	metazoa_odb10	0.945	0.021	22509	Scaffold	14401	256.1	3			no	not a stony coral; review only
+anthozoa_other	Nematostella vectensis	45351	GCF_000209225.1	refseq	NCBI RefSeq	2020-01-29	ncbi	metazoa_odb10	0.977	0.005	23845	Scaffold	19835	356.6	3			no	not a stony coral; review only
+anthozoa_other	Paramuricea clavata	317549	GCA_902702795.2	genbank	Centro Nacional de Análisis Genómico	2022-11-04					62650	Scaffold	19152	607.0	1			no	not a stony coral; review only
+anthozoa_other	Xenia sp. Carnegie-2017	2897299	GCF_021976095.1	refseq	NCBI RefSeq	2022-02-24	ncbi	metazoa_odb10	0.921	0.02	18425	Scaffold	1122448	222.7	1			no	not a stony coral; review only
+bivalve	Argopecten irradians	31199	GCF_041381155.1	refseq	NCBI RefSeq	2024-10-11	ncbi	mollusca_odb10	0.95	0.016	25634	Chromosome	3547744	845.9	1			yes	
+bivalve	Chamelea gallina	138984	GCA_965234305.1	genbank	University of Padova	2025-08-22	cpgme	metazoa_odb10	0.788	0.09	36179	Chromosome	24259675	1807.9	1			no	BUSCO complete < 80%
+bivalve	Crassostrea virginica	6565	GCF_053477285.1	refseq	NCBI RefSeq	2025-12-30	ncbi	mollusca_odb10	0.991	0.002	28649	Chromosome	16475059	529.0	2		same_accession	yes	
+bivalve	Dreissena polymorpha	45954	GCF_020536995.1	refseq	NCBI RefSeq	2022-11-22	ncbi	mollusca_odb10	0.92	0.004	36414	Chromosome	1111654	1797.9	2		same_accession	yes	
+bivalve	Mactra antiquata	2302425	GCA_047288015.1	genbank	Ocean University of China	2025-01-28	cpgme	metazoa_odb10	0.978	0.009	24436	Chromosome	8652042	791.8	1			yes	
+bivalve	Magallana angulata	2784310	GCF_025612915.1	refseq	NCBI RefSeq	2022-12-22	ncbi	mollusca_odb10	0.988	0.001	29810	Chromosome	10870631	624.3	1			yes	
+bivalve	Magallana gigas	29159	GCF_963853765.1	refseq	NCBI RefSeq	2024-06-20	ncbi	mollusca_odb10	0.963	0.004	26073	Chromosome	7289204	564.0	2		same_accession	yes	
+bivalve	Mercenaria mercenaria	6596	GCF_021730395.1	refseq	NCBI RefSeq	2023-01-14	ncbi	mollusca_odb10	0.903	0.009	38330	Chromosome	82432825	1858.2	2		same_accession	yes	
+bivalve	Mizuhopecten yessoensis	6573	GCF_002113885.1	refseq	NCBI RefSeq	2017-06-15	ncbi	mollusca_odb10	0.989	0.005	24532	Scaffold	65014	987.6	2			yes	
+bivalve	Mya arenaria	6604	GCF_026914265.1	refseq	NCBI RefSeq	2023-01-06	ncbi	mollusca_odb10	0.939	0.005	36031	Chromosome	3381420	1216.1	2			yes	
+bivalve	Mytilus californianus	6549	GCF_021869535.1	refseq	NCBI RefSeq	2022-11-09	ncbi	mollusca_odb10	0.949	0.002	26243	Scaffold	16323199	1652.0	1			yes	
+bivalve	Mytilus coruscus	42192	GCA_011752425.2	genbank	NINGBO UNIVERSITY	2020-07-08	cpgme	metazoa_odb10	0.805	0.046	58249	Scaffold	817337	1903.8	1			yes	
+bivalve	Mytilus edulis	6550	GCF_963676685.1	refseq	NCBI RefSeq	2025-02-12	ncbi	mollusca_odb10	0.971	0.006	35875	Chromosome	1737898	1368.4	2		same_accession	yes	
+bivalve	Mytilus galloprovincialis	29158	GCF_965363235.1	refseq	NCBI RefSeq	2025-08-13	ncbi	mollusca_odb10	0.968	0.007	27168	Chromosome	12118000	1385.4	3			yes	
+bivalve	Mytilus trossulus	6551	GCF_036588685.1	refseq	NCBI RefSeq	2024-02-29	ncbi	mollusca_odb10	0.961	0.002	34235	Chromosome	4973962	1298.6	1			yes	
+bivalve	Ostrea edulis	37623	GCF_947568905.1	refseq	NCBI RefSeq	2023-05-10	ncbi	mollusca_odb10	0.987	0.003	27763	Chromosome	2427391	894.8	2		same_accession	yes	
+bivalve	Pecten maximus	6579	GCF_902652985.1	refseq	NCBI RefSeq	2020-04-16	ncbi	mollusca_odb10	0.979	0.005	26152	Chromosome	1258799	918.3	1		same_accession	yes	
+bivalve	Perna viridis	73031	GCF_037379345.1	refseq	NCBI RefSeq	2026-09-15	ncbi	mollusca_odb10	0.96	0.007	24439	Chromosome	10239545	723.1	1			yes	
+bivalve	Pinctada imbricata	66713	GCA_033119305.1	genbank	Guangdong Ocean University	2023-10-30	cpgme	metazoa_odb10	0.855	0.066	25526	Scaffold	1751717	987.6	1			yes	
+bivalve	Potamilus streckersoni	2493646	GCA_016746295.1	genbank	University of Texas at Austin	2023-11-13	cpgme	metazoa_odb10	0.943	0.016	34937	Scaffold	2032685	1776.8	1			yes	
+bivalve	Ruditapes philippinarum	129788	GCF_026571515.1	refseq	NCBI RefSeq	2023-10-30	ncbi	mollusca_odb10	0.914	0.01	40909	Contig	183074	1408.1	1			yes	
+bivalve	Saccostrea cuccullata	36930	GCF_032062105.1	refseq	NCBI RefSeq	2024-01-31	ncbi	mollusca_odb10	0.934	0.012	42945	Contig	115002	1170.6	1			yes	
+bivalve	Saccostrea echinata	191078	GCF_033153115.1	refseq	NCBI RefSeq	2023-12-02	ncbi	mollusca_odb10	0.99	0.0	28350	Contig	19678253	923.1	1			yes	
+bivalve	Sinanodonta woodiana	1069815	GCA_046254885.1	genbank	Chinese Academy of Fishery Sciences	2024-12-23	cpgme	metazoa_odb10	0.99	0.006	44785	Chromosome	4007853	2804.1	1			yes	
+bivalve	Sinohyriopsis cumingii	165450	GCF_028554795.1	refseq	NCBI RefSeq	2026-10-13	ncbi	mollusca_odb10	0.954	0.011	27096	Chromosome	5295426	2905.0	1			yes	
+bivalve	Solemya velum	13268	GCA_048127485.1	genbank	Smithsonian Institution, National Museum of Natural History (NMNH)	2025-02-26	cpgme	metazoa_odb10	0.897	0.039	19019	Scaffold	391107	1495.4	1			yes	
+bivalve	Tegillarca granosa	220873	GCA_029721355.1	genbank	Korea University	2023-04-18	cpgme	metazoa_odb10	0.701	0.123	25076	Chromosome	463414	915.5	1			no	BUSCO complete < 80%
+bivalve	Ylistrum balloti	509963	GCF_031769215.1	refseq	NCBI RefSeq	2023-10-03	ncbi	mollusca_odb10	0.978	0.005	20868	Contig	1033552	648.5	1			yes	
+hemiptera	Acyrthosiphon pisum	7029	GCF_000142985.2	refseq	NCBI RefSeq	2016-05-12	ncbi	hemiptera_odb10	0.991	0.004	18614	Scaffold	28201	541.7	2			yes	
+hemiptera	Adelges cooleyi	133065	GCF_023614345.1	refseq	NCBI RefSeq	2022-09-07	ncbi	hemiptera_odb10	0.992	0.001	13556	Scaffold	7175929	270.2	1			yes	
+hemiptera	Aphis craccivora	307492	GCA_009835225.1	genbank	Belarusian State University	2020-01-09	cpgme	metazoa_odb10	0.92	0.025	32005	Scaffold	32785	318.9	1			yes	
+hemiptera	Aphis fabae	191316	GCA_984580985.1	genbank	CENTRE FOR GENOMIC RESEARCH UNIVERSITY OF LIVERPOOL	2026-08-07	cpgme	metazoa_odb10	0.919	0.022	18873	Chromosome	42195152	395.9	2			yes	
+hemiptera	Aphis glycines	307491	GCA_009761285.1	genbank	Puerto Rico Science, Technology and Research Trust	2019-12-17	cpgme	metazoa_odb10	0.787	0.021	18358	Scaffold	1958040	308.1	1			no	BUSCO complete < 80%
+hemiptera	Aphis gossypii	80765	GCF_020184175.1	refseq	NCBI RefSeq	2022-08-17	ncbi	hemiptera_odb10	0.991	0.0	14853	Chromosome	3973335	334.9	3			yes	
+hemiptera	Apolygus lucorum	248454	GCA_009739505.2	genbank	Agricultural Genomics Institute at Shenzhen	2020-09-02	cpgme	metazoa_odb10	0.913	0.034	20111	Chromosome	783891	1023.6	1			yes	
+hemiptera	Aquarius najas	108913	GCA_988221655.1	genbank	Evolutionary Biology Centre, Uppsala University	2026-08-28	cpgme	metazoa_odb10	0.956	0.004	14465	Chromosome	30619405	883.3	1			yes	
+hemiptera	Bemisia tabaci	7038	GCF_001854935.1	refseq	NCBI RefSeq	2016-11-04	ncbi	hemiptera_odb10	0.988	0.001	13914	Scaffold	84501	615.0	3			yes	
+hemiptera	Cimex lectularius	79782	GCF_000648675.2	refseq	NCBI RefSeq	2018-02-21	ncbi	hemiptera_odb10	0.994	0.0	11949	Scaffold	552423	510.8	1			yes	
+hemiptera	Cinara cedri	506608	GCA_902439185.1	genbank	CNAG	2019-09-18	cpgme	metazoa_odb10	0.885	0.007	16833	Scaffold	282647	396.0	1			yes	
+hemiptera	Corizus hyoscyami	1511259	GCA_059059285.1	genbank	Xinjiang Normal University	2026-07-08	cpgme	metazoa_odb10	0.572	0.092	14410	Chromosome	1581415	1462.7	1			no	BUSCO complete < 80%
+hemiptera	Cyamophila willieti	2604842	GCA_041222665.1	genbank	China Agricultral University	2024-08-13	cpgme	metazoa_odb10	0.792	0.082	15660	Chromosome	808530	359.7	1			no	BUSCO complete < 80%
+hemiptera	Daktulosphaira vitifoliae	58002	GCF_025091365.1	refseq	NCBI RefSeq	2022-09-14	ncbi	hemiptera_odb10	0.991	0.002	14650	Scaffold	72133	282.6	1			yes	
+hemiptera	Diaphorina citri	121845	GCF_000475195.1	refseq	NCBI RefSeq	2018-10-15	ncbi	hemiptera_odb10	0.868	0.063	20082	Scaffold	34407	485.7	4	yes		no	assembly flagged atypical
+hemiptera	Diuraphis noxia	143948	GCF_037042655.1	refseq	NCBI RefSeq	2026-10-05	ncbi	hemiptera_odb10	0.997	0.001	15887	Contig	85015780	445.9	2			yes	
+hemiptera	Gerris buenoi	56086	GCA_977966815.1	genbank	Evolutionary Biology Centre, Uppsala University	2025-12-19	cpgme	metazoa_odb10	0.818	0.063	19216	Scaffold	3988	1001.6	1			yes	
+hemiptera	Halyomorpha halys	286706	GCF_000696795.3	refseq	NCBI RefSeq	2024-07-26	ncbi	hemiptera_odb10	0.989	0.004	14486	Scaffold	17705	1150.1	2			yes	
+hemiptera	Homalodisca vitripennis	197043	GCF_021130785.1	refseq	NCBI RefSeq	2022-01-28	ncbi	hemiptera_odb10	0.927	0.01	19904	Chromosome	168834166	2305.0	2			yes	
+hemiptera	Kerria lacca	473130	GCA_045014175.1	genbank	Institute of Highland Forest Science, Chinese Academy of Forestry	2024-11-18	cpgme	metazoa_odb10	0.897	0.015	10696	Complete Genome	28534742	256.6	1			yes	
+hemiptera	Laodelphax striatellus	195883	GCA_003335185.2	genbank	Institute of Zoology, Chinese Academy of Sciences	2019-06-18	cpgme	metazoa_odb10	0.917	0.043	17512	Scaffold	119723	539.9	1		same_accession	yes	
+hemiptera	Lycorma delicatula	130591	GCF_047948215.1	refseq	NCBI RefSeq	2025-07-15	ncbi	hemiptera_odb10	0.983	0.004	14205	Chromosome	24075027	2201.1	1		same_accession	yes	
+hemiptera	Macrosiphum euphorbiae	13131	GCA_949089665.1	genbank	CENTRE FOR GENOMIC RESEARCH UNIVERSITY OF LIVERPOOL	2023-05-30	cpgme	metazoa_odb10	0.93	0.018	31074	Scaffold	731014	560.3	1			yes	
+hemiptera	Macrosteles quadrilineatus	74068	GCF_028750875.1	refseq	NCBI RefSeq	2023-03-16	ncbi	hemiptera_odb10	0.975	0.001	21979	Scaffold	3405181	1317.9	1		same_accession	yes	
+hemiptera	Melanaphis sacchari	742174	GCF_002803265.2	refseq	NCBI RefSeq	2018-06-27	ncbi	hemiptera_odb10	0.994	0.001	12320	Scaffold	275006	300.3	1			yes	
+hemiptera	Metopolophium dirhodum	44670	GCF_019925205.1	refseq	NCBI RefSeq	2023-11-09	ncbi	hemiptera_odb10	0.996	0.0	17524	Chromosome	7032305	480.8	1			yes	
+hemiptera	Myzus persicae	13164	GCF_001856785.1	refseq	NCBI RefSeq	2017-08-10	ncbi	hemiptera_odb10	0.998	0.001	15006	Scaffold	218922	347.3	1			yes	
+hemiptera	Nesidiocoris tenuis	355587	GCF_036186465.1	refseq	NCBI RefSeq	2026-11-19	ncbi	hemiptera_odb10	0.957	0.004	11420	Chromosome	9028578	265.6	3			yes	
+hemiptera	Nezara viridula	85310	GCA_928085145.1	genbank	ROTHAMSTED RESEARCH	2022-06-27	cpgme	metazoa_odb10	0.876	0.021	15971	Chromosome	6352814	1185.1	1			yes	
+hemiptera	Nilaparvata lugens	108931	GCF_014356525.2	refseq	NCBI RefSeq	2021-02-12	cpgme	metazoa_odb10	0.944	0.015	18139	Chromosome	585858	1085.5	2		same_accession	yes	
+hemiptera	Parthenolecanium corni	536013	GCA_038050395.1	genbank	Australian Wine Research Institute	2024-04-10	cpgme	metazoa_odb10	0.833	0.02	14951	Contig	14265238	231.2	1			yes	
+hemiptera	Planococcus citri	170843	GCF_950023065.1	refseq	NCBI RefSeq	2024-05-09	ncbi	hemiptera_odb10	0.959	0.002	16596	Chromosome	23636000	403.6	1			yes	
+hemiptera	Ranatra chinensis	642074	GCA_040954505.1	genbank	China Agricultural University	2024-08-01	cpgme	metazoa_odb10	0.851	0.056	14188	Chromosome	17369230	778.0	1			yes	
+hemiptera	Rhodnius prolixus	13249	GCF_049639745.1	refseq	NCBI RefSeq	2025-05-09	ncbi	hemiptera_odb10	0.98	0.003	12270	Scaffold	27976301	588.5	1			yes	
+hemiptera	Rhopalosiphum maidis	43146	GCF_003676215.2	refseq	NCBI RefSeq	2019-02-14	ncbi	hemiptera_odb10	0.998	0.0	12060	Chromosome	9046396	326.0	1			yes	
+hemiptera	Rhopalosiphum padi	40932	GCF_020882245.1	refseq	NCBI RefSeq	2023-11-09	ncbi	hemiptera_odb10	0.997		13285	Chromosome	14338858	338.2	1			yes	
+hemiptera	Rhynocoris fuscipes	488301	GCA_040020575.1	genbank	China Agricultural University	2024-06-03	cpgme	metazoa_odb10	0.827	0.022	13362	Chromosome	3929296	621.6	1			yes	
+hemiptera	Semiaphis heraclei	796293	GCA_046119115.1	genbank	institute of plant protection	2025-03-10	cpgme	metazoa_odb10	0.93	0.018	13871	Chromosome	81748631	433.0	1			yes	
+hemiptera	Sipha flava	143950	GCF_003268045.1	refseq	NCBI RefSeq	2018-07-05	ncbi	hemiptera_odb10	0.967	0.002	13575	Scaffold	163055	353.2	1			yes	
+hemiptera	Uroleucon formosanum	796250	GCA_046862315.1	genbank	Institute of Zoology, Chinese Academy of Sciences	2025-01-21	cpgme	metazoa_odb10	0.938	0.013	30215	Contig	33215695	453.2	1			yes	
+tunicate	Aplidium turbinatum	2771288	GCF_918807975.1	refseq	NCBI RefSeq	2026-04-13	ncbi	metazoa_odb10	0.948	0.005	19642	Chromosome	14915238	605.5	1			yes	
+tunicate	Ascidia mentula	38561	GCF_947561715.1	refseq	NCBI RefSeq	2026-04-21	ncbi	metazoa_odb10	0.95	0.008	18740	Chromosome	11890000	197.0	1			yes	
+tunicate	Ascidiella aspersa	201961	GCF_963924565.1	refseq	NCBI RefSeq	2026-06-08	ncbi	metazoa_odb10	0.953	0.008	14978	Chromosome	6569131	307.8	1			yes	
+tunicate	Botryllus schlosseri	30301	GCF_051294905.1	refseq	NCBI RefSeq	2026-02-20	ncbi	metazoa_odb10	0.945	0.01	19211	Chromosome	4368170	495.5	1			yes	
+tunicate	Ciona intestinalis	7719	GCF_000224145.3	refseq	NCBI RefSeq	2018-10-16	ncbi	metazoa_odb10	0.938	0.006	13726	Chromosome	37096	115.2	2			yes	
+tunicate	Ciona robusta	1774208	GCF_009617815.1	refseq	NCBI RefSeq	2026-10-26	ncbi	metazoa_odb10	0.955	0.005	14255	Chromosome	3747202	123.0	1		same_accession	yes	
+tunicate	Clavelina lepadiformis	159417	GCF_947623445.1	refseq	NCBI RefSeq	2025-09-15	ncbi	metazoa_odb10	0.947	0.006	17001	Chromosome	8263119	210.1	2			yes	
+tunicate	Corella eumyota	431183	GCF_963082875.1	refseq	NCBI RefSeq	2026-04-13	ncbi	metazoa_odb10	0.962	0.006	13970	Chromosome	5034709	129.3	1			yes	
+tunicate	Oikopleura dioica	34765	GCF_907165135.1	refseq	NCBI RefSeq	2026-03-11	ncbi	metazoa_odb10	0.722	0.051	15457	Chromosome	4700139	64.3	4			no	BUSCO complete < 80%
+tunicate	Phallusia mammillata	59560	GCF_965637545.1	refseq	NCBI RefSeq	2026-02-20	ncbi	metazoa_odb10	0.958	0.006	19521	Chromosome	1013036	240.3	1			yes	
+tunicate	Styela clava	7725	GCF_964204865.1	refseq	NCBI RefSeq	2025-12-11	ncbi	metazoa_odb10	0.964	0.009	19380	Chromosome	17108000	376.8	2		same_accession	yes	
+tunicate	Thalia democratica	34761	GCF_965202585.1	refseq	NCBI RefSeq	2026-04-22	ncbi	metazoa_odb10	0.892	0.013	15855	Chromosome	12003043	801.8	1			yes	
+seastar	Acanthaster planci	133434	GCF_054643075.1	refseq	NCBI RefSeq	2026-08-07	ncbi	metazoa_odb10	0.986	0.003	18608	Chromosome	1391291	436.9	2		same_accession	yes	
+seastar	Asterias amurensis	7602	GCF_032118995.1	refseq	NCBI RefSeq	2025-03-06	ncbi	metazoa_odb10	0.992	0.004	16932	Chromosome	8054564	491.5	1			yes	
+seastar	Asterias rubens	7604	GCF_902459465.1	refseq	NCBI RefSeq	2020-04-21	ncbi	metazoa_odb10	0.985	0.003	16079	Chromosome	1383654	417.6	1		same_accession	yes	
+seastar	Patiria miniata	46514	GCF_015706575.1	refseq	NCBI RefSeq	2020-12-07	ncbi	metazoa_odb10	0.981	0.001	23044	Scaffold	2102889	608.3	1			yes	
