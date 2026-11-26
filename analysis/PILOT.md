@@ -183,8 +183,8 @@ settings on Raven. GO Slim test, housekeeping (HK) vs inducible (IND):
 
 ## Next steps
 
-1. ~~WGBS validation for *M. gigas* and *Apis*~~ (done, see "WGBS validation" below). Next:
-   *N. lugens* WGBS to explain its flat profile.
+1. ~~WGBS validation~~ (done for *M. gigas* and *Apis*, see "WGBS validation" below). It is
+   strong and consistent across ten datasets, so no further WGBS validation is planned.
 2. A covariate check: does the housekeeping/inducible gap survive controlling for GC content,
    gene length and expression breadth?
 3. Phase 1: build the full manifest from NCBI (all annotated genomes in the five groups).

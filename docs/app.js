@@ -415,7 +415,7 @@
     }
     t.append(thead, tb);
     wrap.append(t);
-    box.append(wrap, el("p", { class: "note" }, "Methylated gene: weighted methylation ≥ 0.5. AUC: probability that a methylated gene has lower CpG O/E than an unmethylated one. Low class: posterior > 0.5 for the low CpG O/E mixture component."));
+    box.append(wrap, el("p", { class: "note" }, "Low class: posterior probability > 0.5 for the low CpG O/E mixture component. Methylated gene: weighted methylation ≥ 0.5."));
   }
 
   // ---------- boot ----------

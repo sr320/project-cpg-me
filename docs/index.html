@@ -74,6 +74,42 @@
 
   <section class="card" aria-labelledby="h-valid">
     <div class="card-head"><h2 id="h-valid">Validation against WGBS</h2></div>
+    <div class="explain">
+      <p>CpG O/E is an indirect estimate: it infers germline methylation from the CpGs a gene
+        has lost over evolutionary time. Here it is checked against methylation measured directly
+        by whole-genome bisulfite sequencing (WGBS) in germline tissue: oyster gonads and honey bee
+        sperm. Each row compares, gene by gene, CpG O/E for one feature with the measured
+        methylation level of the same gene in one sample.</p>
+      <p><strong>Result:</strong> in all ten datasets, low CpG O/E picks out the methylated genes.
+        Nearly every methylated gene falls in the low CpG O/E class, and genes in the high class
+        are essentially unmethylated. The eight female gonads agree almost exactly.</p>
+      <details>
+        <summary>How to read the columns</summary>
+        <ul>
+          <li><strong>Genes</strong>: genes with at least 5 CpGs each covered by at least 5 reads.
+            A gene's methylation is the share of methylated reads over those CpGs (0 to 1); it
+            counts as methylated at 0.5 or more.</li>
+          <li><strong>Spearman ρ</strong>: rank correlation between CpG O/E and measured
+            methylation. Negative is expected (lower CpG O/E, more methylation); 0 would mean no
+            relationship, −1 a perfect inverse ranking. Values near −0.7 to −0.8 are strong.</li>
+          <li><strong>AUC</strong>: the chance that a randomly chosen methylated gene has lower
+            CpG O/E than a randomly chosen unmethylated one. 0.5 is a coin toss, 1 is perfect
+            separation.</li>
+          <li><strong>Misclassified</strong>: share of genes where the CpG O/E class (low or
+            high, from the two-component mixture) disagrees with measured methylation.</li>
+          <li><strong>Precision</strong>: of genes in the low CpG O/E class, the share that are
+            methylated. <strong>Recall</strong>: of methylated genes, the share in the low class.</li>
+          <li><strong>Median meth, low / high class</strong>: typical measured methylation of
+            genes in each class.</li>
+        </ul>
+        <p>Recall is high (0.95 to 0.99) and precision lower (0.28 to 0.67), so the errors run one
+          way: genes with low CpG O/E that are not methylated in the sequenced sample. That is
+          expected. CpG O/E records methylation over evolutionary time, so some of those genes
+          lost methylation recently or are methylated only in other cells or stages. Honey bee
+          methylation is sparser and lighter (median 0.33 in the low class), which is why its
+          precision is lowest. Hover a row for its data source.</p>
+      </details>
+    </div>
     <div id="validation"></div>
   </section>
 

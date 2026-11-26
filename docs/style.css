@@ -147,3 +147,10 @@ table.data tbody tr:focus-visible { outline: 2px solid var(--accent); outline-of
   .tile .value { font-size: 24px; }
 }
 table.data td .sub { color: var(--muted); font-size: 12px; white-space: normal; max-width: 360px; }
+.explain { max-width: 820px; color: var(--ink-2); font-size: 13.5px; margin-top: 6px; }
+.explain p { margin: 6px 0; }
+.explain strong { color: var(--ink); font-weight: 600; }
+.explain details { margin: 8px 0 4px; }
+.explain summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+.explain ul { margin: 6px 0 0; padding-left: 18px; }
+.explain li { margin: 4px 0; }
