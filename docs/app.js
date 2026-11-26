@@ -408,6 +408,8 @@
         [fmt(lc.precision), "num"], [fmt(lc.recall), "num"],
         [`${fmt(lc.median_meth_low)} / ${fmt(lc.median_meth_high)}`, "num"]];
       for (const [txt, cls] of cells) tr.append(el("td", { class: cls }, txt));
+      const what = (v.source || "").split(";")[0].replace(/\s*WGBS\b/, "");
+      if (what) tr.children[1].append(el("div", { class: "sub" }, what));
       tr.title = v.source;
       tb.append(tr);
     }
