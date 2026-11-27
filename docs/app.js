@@ -548,7 +548,7 @@
   const INV = ["invasive", "introduced", "native", "uncertain"];
   const INV_COLOR = { invasive: "--cat-2", introduced: "--cat-4", native: "--cat-1", uncertain: "--muted" };
   const pca = { set: "summary", feat: "gene_body", clade: "all", center: false, color: "group", view: "2d",
-                x: 0, y: 1, z: 2, cmp: "native", centroids: true, hidden: new Set(), rot: null, res: null };
+                x: 0, y: 1, z: 2, cmp: "native", centroids: true, weight: true, hidden: new Set(), rot: null, res: null };
   const SUMMARY = [
     ["median", "median", (f) => f.median], ["mean", "mean", (f) => f.mean],
     ["low_mean", "low mode, mean", (f) => f.low_mean], ["high_mean", "high mode, mean", (f) => f.high_mean],
@@ -598,7 +598,8 @@
     }
     const g = d.goslim[f];
     if (!g || !pca._goslimBySp?.[f]) return null;
-    return pca._goslimBySp[f].get(d.species.indexOf(sp)) || null;
+    const e = pca._goslimBySp[f].get(d.species.indexOf(sp));
+    return e ? (pca.weight ? e.w : e.raw) : null;
   }
   function featureNames(f) {
     if (pca.set === "summary") return [...SUMMARY.map((x) => x[1]), "HK vs IND effect"];
@@ -609,14 +610,38 @@
   function computePCA() {
     const d = state.data, f = pca.feat;
     if (pca.set === "goslim" && !pca._goslimBySp) {
+      // Per species, two term vectors: raw shifts, and shifts shrunk toward 0 by their reliability
+      // (empirical Bayes): w = tau2 / (tau2 + noise), noise = (pi/2) sigma^2 / n for a median of
+      // n genes, sigma = typical per-gene SD of CpG O/E, tau2 = between-species variance of the
+      // term's shift beyond noise. Terms resting on few genes are pulled toward "no shift".
       pca._goslimBySp = {};
+      pca._goslimInfo = {};
+      const med = (a) => { const b = [...a].sort((x, y) => x - y), h = b.length >> 1; return b.length % 2 ? b[h] : (b[h - 1] + b[h]) / 2; };
       for (const [ff, g] of Object.entries(d.goslim)) {
+        const vars = d.species.map((sp) => sp.fits[ff]).filter((ft) => ft && ft.low_sd != null)
+          .map((ft) => ft.low_weight * ft.low_sd ** 2 + ft.high_weight * ft.high_sd ** 2 +
+            ft.low_weight * ft.high_weight * (ft.low_mean - ft.high_mean) ** 2);
+        const sigma2 = med(vars); // median across species, so a degenerate fit cannot set it
+        const noise = (n) => (Math.PI / 2) * sigma2 / n;
+        const byTerm = g.terms.map(() => []);
+        for (const c of g.cells) if (d.species[c[1]].role === "focal") byTerm[c[0]].push(c);
+        const tau2 = byTerm.map((cs) => {
+          if (cs.length < 3) return 0;
+          const m = cs.reduce((a, c) => a + c[2], 0) / cs.length;
+          const v = cs.reduce((a, c) => a + (c[2] - m) ** 2, 0) / (cs.length - 1);
+          return Math.max(0, v - cs.reduce((a, c) => a + noise(c[4]), 0) / cs.length);
+        });
         const m = new Map();
-        for (const [ti, si, shift] of g.cells) {
-          if (!m.has(si)) m.set(si, new Array(g.terms.length).fill(0));
-          m.get(si)[ti] = shift;
+        const ws = [];
+        for (const [ti, si, shift, , n] of g.cells) {
+          if (!m.has(si)) m.set(si, { raw: new Array(g.terms.length).fill(0), w: new Array(g.terms.length).fill(0) });
+          const w = tau2[ti] > 0 ? tau2[ti] / (tau2[ti] + noise(n)) : 0;
+          m.get(si).raw[ti] = shift;
+          m.get(si).w[ti] = w * shift;
+          ws.push(w);
         }
         pca._goslimBySp[ff] = m;
+        pca._goslimInfo[ff] = { sigma: Math.sqrt(sigma2), medW: med(ws), nZero: tau2.filter((t) => t === 0).length };
       }
     }
     const inClade = (s) => pca.clade === "all" || s.group === pca.clade;
@@ -736,6 +761,7 @@
     segmented($("pca-cmp-seg"), [["native", "vs native", true], ["nonnative", "vs all others", true], ["any", "non-native vs native", true]],
       pca.cmp, (c) => { pca.cmp = c; renderPCA(); });
     $("pca-z-wrap").hidden = pca.view !== "3d";
+    $("pca-weight-wrap").hidden = pca.set !== "goslim";
     $("pca-center").disabled = pca.clade !== "all";
 
     const res = computePCA();
@@ -759,7 +785,10 @@
     const nFit = res.train.length, nProj = res.pts.length - nFit;
     $("pca-note").textContent = `${nFit} focal species fitted` + (nProj ? `, ${nProj} projected (hollow)` : "") +
       (res.dropped.length ? `. Not in this view (no ${FEATURE_LABEL[pca.feat].toLowerCase()} profile): ${res.dropped.map((s) => s.organism).join(", ")}.` : ".") +
-      (pca.view === "3d" ? " Drag to rotate." : "");
+      (pca.view === "3d" ? " Drag to rotate." : "") +
+      (pca.set === "goslim" && pca.weight && pca._goslimInfo?.[pca.feat]
+        ? ` Gene-count weighting: median weight ${pca._goslimInfo[pca.feat].medW.toFixed(2)}; ` +
+          `${pca._goslimInfo[pca.feat].nZero} terms with no between-species signal beyond noise get weight 0.` : "");
   }
 
   function pointTip(pt) {
@@ -969,6 +998,7 @@
     cl.addEventListener("change", () => { pca.clade = cl.value; pca.hidden.clear(); renderPCA(); });
     $("pca-set").addEventListener("change", (e) => { pca.set = e.target.value; renderPCA(); });
     $("pca-center").addEventListener("change", (e) => { pca.center = e.target.checked; renderPCA(); });
+    $("pca-weight").addEventListener("change", (e) => { pca.weight = e.target.checked; renderPCA(); });
     $("pca-centroids").addEventListener("change", (e) => { pca.centroids = e.target.checked; renderPCA(); });
     for (const [id, key] of [["pca-x", "x"], ["pca-y", "y"], ["pca-z", "z"]]) $(id).addEventListener("change", (e) => { pca[key] = +e.target.value; renderPCA(); });
   }

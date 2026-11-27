@@ -79,6 +79,7 @@
       </select></label>
       <label>Feature <span class="seg" role="radiogroup" aria-label="Feature" id="pca-feat-seg"></span></label>
       <label>Fit on <select id="pca-clade"></select></label>
+      <label class="check" id="pca-weight-wrap" hidden><input type="checkbox" id="pca-weight" checked> Weight terms by gene count</label>
       <label class="check"><input type="checkbox" id="pca-center"> Remove clade means</label>
       <label>Colour <span class="seg" role="radiogroup" aria-label="Colour by" id="pca-color-seg"></span></label>
       <label>X <select id="pca-x"></select></label>
@@ -108,7 +109,13 @@
           mixture modes (mean, SD, share), Ashman's D, log ΔBIC, GpC O/E median and the
           housekeeping vs inducible effect, each scaled by its median and MAD and clipped at ±3, so a degenerate mixture fit (a "mode" of one gene) cannot dominate. <em>Full shape</em>:
           the share of genes in each of the 80 CpG O/E bins. <em>GO Slim</em>: each term's median
-          shift against other genes (missing terms set to 0). Shape and GO Slim are not rescaled.</li>
+          shift against other genes (missing terms set to 0). Shape and GO Slim are not rescaled.
+          By default each GO Slim shift is weighted by how many genes it rests on: it is
+          multiplied by τ²/(τ² + (π/2)σ²/n), where n is the term's gene count in that species,
+          σ the typical per-gene SD of CpG O/E (median across species) and τ² the variance of
+          that term's shift across species beyond what sampling noise explains. Shifts from few
+          genes are pulled toward 0; a term whose spread is no larger than its noise drops out.
+          Untick "Weight terms by gene count" for the raw shifts.</li>
         <li><strong>Fit.</strong> PCA is fitted on focal species only. Controls and the
           <em>Lycorma</em> transcriptome check are projected onto the same axes (hollow marks).
           Transcriptome species have CDS only, so they drop out of gene-body views.</li>
