@@ -386,3 +386,53 @@ housekeeping and inducible genes are compared on the residuals. Rank-biserial, g
 
 Outputs: `analysis/covariate_check.tsv`, `covariate_check_wgbs.tsv`, and the dashboard card
 "Does the gap survive GC content and gene length?".
+
+## Phylogenetic test of invasion status within Hemiptera (2026-11-27)
+
+The dashboard's trait-space test shuffles invasion labels within clades, which removes the
+coral / bivalve / insect differences but treats species inside a clade as independent.
+Hemiptera are not independent: most non-native species are aphids. `analysis/phylo_invasion.py`
+repeats the comparison with D-PGLS (Adams 2014), a phylogenetic PERMANOVA with residual
+randomisation (RRPP, 9,999 permutations). It uses the Open Tree of Life synthetic topology for
+the 38 Hemiptera (cached in `analysis/hemiptera_otl.tre`). The tree has no branch lengths, so
+Grafen's are used, with equal branch lengths as a check. Invasion labels come from
+`manifest/traits.tsv` (GISD/WRiMS where covered; most insects keep general-knowledge labels).
+
+p-values, gene body (n = species in each group):
+
+| Profile | Contrast | n | No phylogeny | Grafen | Equal branches |
+|---|---|---|---|---|---|
+| Full shape (80 bins) | non-native vs native | 22 / 12 | 0.0007 | **0.002** | 0.018 |
+| Full shape | invasive vs native | 13 / 12 | 0.009 | 0.043 | 0.054 |
+| Full shape | invasive vs all others | 13 / 23 | 0.10 | 0.11 | 0.14 |
+| Summary (12 statistics) | invasive vs native | 13 / 12 | 0.10 | 0.28 | 0.21 |
+| Summary | non-native vs native | 22 / 12 | 0.07 | 0.26 | 0.44 |
+| GO Slim shifts | invasive vs native | 13 / 12 | 0.07 | 0.28 | 0.51 |
+| GO Slim shifts | non-native vs native | 22 / 12 | 0.04 | 0.24 | 0.76 |
+
+CDS gives the same picture but weaker (full shape, non-native vs native: Grafen p = 0.028,
+equal 0.11). All results: `analysis/phylo_invasion.tsv`. Figure: `analysis/phylo_invasion.png`.
+
+1. **Only the full distribution shape survives the phylogeny.** Non-native Hemiptera
+   (invasive + introduced) differ from native ones in the shape of the gene-body CpG O/E
+   distribution after modelling relatedness (R² 0.13, Grafen p = 0.002). Invasive-only vs
+   native is borderline (p = 0.04–0.05). Summary statistics and GO Slim profiles lose their
+   weak signal once relatedness is modelled: those differences were lineage.
+2. **What differs.** Native Hemiptera mostly have one tight peak at CpG O/E 0.7–0.9
+   (planthoppers, assassin bugs, *Apolygus*, *Macrosteles*). Non-native species have broader
+   distributions: about 5 percentage points more genes at 0.3–0.5 (the low, historically
+   methylated class: *Lycorma*, *Halyomorpha*, *Nezara*) and more at 0.9–1.1 (aphids), with
+   11 points fewer in the 0.7–0.9 peak (phylogenetic GLS estimates).
+3. **Profiles carry strong phylogenetic signal** (Kmult p ≤ 0.02 for every profile). K is
+   below 1 with Grafen branch lengths and above 1 with equal ones, so its size depends on the
+   unknown branch lengths, but its presence does not.
+4. **How much this is worth.** 18 tests per tree model; only non-native vs native on full
+   shape passes a Bonferroni threshold (0.05 / 18 = 0.003), and only with Grafen lengths. The
+   full-shape profile was picked out by the dashboard before this test, the labels were revised
+   after a first look, and the effective number of independent origins of invasiveness is
+   small (pentatomids, *Lycorma*, *Homalodisca*, *Bemisia*, *Planococcus*, *Daktulosphaira*,
+   and aphids, which are nearly all non-native). Within aphids there are only two native
+   species (*Uroleucon*, *Semiaphis*), and in sister-pair terms the contrast rests on few
+   comparisons: *Homalodisca* vs *Macrosteles*, *Lycorma* vs *Cyrpoptus* (transcriptome, CDS
+   only), pentatomids vs the other true bugs. Treat this as a lead for a pre-registered test
+   with a dated tree (e.g. TimeTree) and more native relatives of the invasive species.
