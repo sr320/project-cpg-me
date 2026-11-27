@@ -1,112 +1,115 @@
 # Species traits for the trait-space (PCA) view. One row per species name (matches manifest/species.tsv `species`).
-# invasion: invasive   = established outside the native range AND treated as invasive/harmful (e.g. listed in GISD, or a recognised invasive pest)
-#           introduced = established outside the native range (often via aquaculture or trade) but not commonly treated as invasive, or status debated
-#           native     = no established non-native populations known
+# invasion: invasive   = GISD account as an alien, or >= 1 WRiMS locality flagged invasive / of concern
+#           introduced = non-native records (WRiMS alien, or GISD listing without account) but none flagged invasive
+#           native     = marine/brackish species with no non-native records
 #           uncertain  = not enough information to assign
-# PROVISIONAL: drafted 2026-11-27 from general knowledge, not yet checked against GISD / WRiMS / NEMESIS. Verify before any inference.
-species	invasion	basis
-Acropora cervicornis	native
-Acropora millepora	native
-Acropora muricata	native
-Acropora palmata	native
-Cyphastrea microphthalma	native
-Desmophyllum pertusum	native
-Madrepora oculata	native
-Montipora capricornis	native
-Montipora foliosa	native
-Oculina patagonica	uncertain	long described as a Mediterranean introduction; native vs introduced origin is debated
-Orbicella faveolata	native
-Orbicella franksi	native
-Pavona decussata	native
-Pocillopora damicornis	native
-Pocillopora meandrina	native
-Pocillopora verrucosa	native
-Porites evermanni	native
-Porites harrisoni	native
-Porites lobata	native
-Porites lutea	native
-Stylophora pistillata	native
-Argopecten irradians	introduced	bay scallop; introduced to China for aquaculture
-Corbicula fluminea	invasive	Asian clam; GISD; invasive in Americas and Europe
-Crassostrea virginica	native	eastern oyster; native contrast with M. gigas
-Dreissena polymorpha	invasive	zebra mussel; GISD
-Dreissena rostriformis bugensis	invasive	quagga mussel; invasive in North America and western Europe
-Mactra antiquata	native
-Magallana angulata	introduced	Portuguese oyster; Asian origin, introduced to southern Europe
-Magallana gigas	invasive	Pacific oyster; GISD; spread from aquaculture worldwide
-Mercenaria mercenaria	introduced	hard clam; introduced to Europe for culture
-Mizuhopecten yessoensis	introduced	Yesso scallop; introduced to China for aquaculture
-Mya arenaria	introduced	softshell clam; historical introductions to Europe and the NE Pacific
-Mytilus californianus	native
-Mytilus coruscus	native
-Mytilus edulis	native
-Mytilus galloprovincialis	invasive	Mediterranean mussel; GISD; invasive in S Africa, Asia, NE Pacific
-Mytilus trossulus	native
-Ostrea edulis	native
-Pecten maximus	native
-Perna viridis	invasive	Asian green mussel; GISD; invasive in Caribbean and SE USA
-Pinctada imbricata	introduced	P. imbricata radiata is a Lessepsian invader in the Mediterranean; depends on which lineage was sequenced
-Potamilus streckersoni	native
-Ruditapes philippinarum	introduced	Manila clam; introduced widely for culture, invasive in some lagoons
-Saccostrea cuccullata	native
-Saccostrea echinata	native
-Sinanodonta woodiana	invasive	Chinese pond mussel; invasive in Europe
-Sinohyriopsis cumingii	native
-Solemya velum	native
-Ylistrum balloti	native
-Acyrthosiphon pisum	introduced	pea aphid; Palearctic, now cosmopolitan
-Adelges cooleyi	introduced	Cooley spruce gall adelgid; N American, introduced to Europe
-Aphis craccivora	introduced	cowpea aphid; cosmopolitan pest
-Aphis fabae	introduced	black bean aphid; cosmopolitan pest
-Aphis gossypii	invasive	cotton aphid; cosmopolitan pest, on many invasive-species lists
-Apolygus lucorum	native	green plant bug; Asian pest within native range
-Aquarius najas	native
-Bemisia tabaci	invasive	silverleaf whitefly; GISD (MEAM1/MED biotypes)
-Cimex lectularius	uncertain	bed bug; cosmopolitan human-associated, not usually classed by range
-Cinara cedri	introduced	cedar aphid; spread with ornamental cedars
-Cyrpoptus belfragei	native	Fulgoridae; native to US, not invasive
-Daktulosphaira vitifoliae	invasive	grape phylloxera; N American, invasive in Europe and worldwide
-Diuraphis noxia	invasive	Russian wheat aphid; invasive in S Africa and the Americas
-Gerris buenoi	native
-Halyomorpha halys	invasive	brown marmorated stink bug; invasive in N America and Europe
-Homalodisca vitripennis	invasive	glassy-winged sharpshooter; invasive in California and Pacific islands
-Kerria lacca	native	lac insect
-Laodelphax striatellus	native	small brown planthopper; native Eurasian rice pest, not listed as invasive
-Lycorma delicatula	invasive	spotted lanternfly; invasive in Korea, Japan, USA
-Macrosiphum euphorbiae	introduced	potato aphid; N American, introduced to Europe
-Macrosteles quadrilineatus	native	aster leafhopper
-Melanaphis sacchari	invasive	sugarcane aphid; invaded US sorghum from 2013
-Metopolophium dirhodum	introduced	rose-grain aphid; Palearctic, introduced to the Americas and Australasia
-Myzus persicae	invasive	green peach aphid; cosmopolitan pest, on many invasive-species lists
-Nesidiocoris tenuis	introduced	predatory mirid; spread and released as biocontrol, also a crop pest
-Nezara viridula	invasive	southern green stink bug; cosmopolitan invasive pest
-Nilaparvata lugens	native	brown planthopper; migratory pest within native Asian range
-Parthenolecanium corni	introduced	European fruit lecanium; cosmopolitan
-Planococcus citri	invasive	citrus mealybug; cosmopolitan invasive pest
-Ranatra chinensis	native
-Rhodnius prolixus	native	kissing bug
-Rhopalosiphum maidis	introduced	corn leaf aphid; cosmopolitan
-Rhopalosiphum padi	introduced	bird cherry-oat aphid; cosmopolitan
-Rhynocoris fuscipes	native
-Semiaphis heraclei	native
-Sipha flava	uncertain	yellow sugarcane aphid; American, introduced to Hawaii and elsewhere
-Sogatella furcifera	native	white-backed planthopper; migratory pest within native Asian range
-Uroleucon formosanum	native
-Acanthaster planci	native	crown-of-thorns; outbreaks within native range, not invasive
-Asterias amurensis	invasive	northern Pacific sea star; GISD; invasive in Australia
-Asterias rubens	native
-Patiria miniata	native
-Aplidium turbinatum	native
-Ascidia mentula	native
-Ascidiella aspersa	invasive	invasive in N America, Australia, S America
-Botryllus schlosseri	invasive	golden star tunicate; cosmopolitan fouling invader
-Ciona intestinalis	invasive	GISD; fouling invader
-Ciona robusta	invasive	widely introduced fouling species (formerly C. intestinalis type A)
-Clavelina lepadiformis	introduced	introduced to NE America and S Africa
-Corella eumyota	invasive	southern hemisphere species invading European coasts
-Halocynthia roretzi	native
-Phallusia mammillata	native
-Styela clava	invasive	clubbed tunicate; GISD
-Thalia democratica	native	pelagic salp
-Apis mellifera	introduced	control; managed worldwide
-Drosophila melanogaster	introduced	control; cosmopolitan
+#           Species outside both databases (most insects, freshwater mussels) keep the general-knowledge label (source column).
+# source: which database(s) set the label (rule in scripts/check_invasion_dbs.py); 'general knowledge' = species outside GISD and outside WRiMS scope (terrestrial/freshwater).
+# evidence: database hits; label_general_knowledge: the earlier label drafted 2026-11-27; notes: common name and context.
+# Checked against GISD and WRiMS on 2026-11-27; full evidence in manifest/invasion_db.tsv.
+species	invasion	source	evidence	label_general_knowledge	notes
+Acropora cervicornis	native	WRiMS (no alien records)		native	
+Acropora millepora	native	WRiMS (no alien records)		native	
+Acropora muricata	native	WRiMS (no alien records)		native	
+Acropora palmata	native	WRiMS (no alien records)		native	
+Cyphastrea microphthalma	native	WRiMS (no alien records)		native	
+Desmophyllum pertusum	native	WRiMS (no alien records)		native	
+Madrepora oculata	native	WRiMS (no alien records)		native	
+Montipora capricornis	native	WRiMS (no alien records)		native	
+Montipora foliosa	native	WRiMS (no alien records)		native	
+Oculina patagonica	invasive	WRiMS	WRiMS 13 alien localities, 2 invasive (Algerian part of the Alboran Sea; Tunisian part of the Mediterranean Sea - Western Basin)	uncertain	long described as a Mediterranean introduction; native vs introduced origin is debated
+Orbicella faveolata	native	WRiMS (no alien records)		native	
+Orbicella franksi	native	WRiMS (no alien records)		native	
+Pavona decussata	native	WRiMS (no alien records)		native	
+Pocillopora damicornis	native	WRiMS (no alien records)		native	
+Pocillopora meandrina	native	WRiMS (no alien records)		native	
+Pocillopora verrucosa	native	WRiMS (no alien records)		native	
+Porites evermanni	native	WRiMS (no alien records)		native	
+Porites harrisoni	native	WRiMS (no alien records)		native	
+Porites lobata	native	WRiMS (no alien records)		native	
+Porites lutea	native	WRiMS (no alien records)		native	
+Stylophora pistillata	native	WRiMS (no alien records)		native	
+Argopecten irradians	introduced	WRiMS	WRiMS 6 alien localities, 0 invasive	introduced	bay scallop; introduced to China for aquaculture
+Corbicula fluminea	invasive	GISD+WRiMS	GISD account; WRiMS 16 alien localities, 6 invasive (Canadian part of the Coastal Waters of Southeast Alaska and British Columbia; Irish part of the North Atlantic Ocean; Mexican part of the Gulf of Mexico; ...)	invasive	Asian clam; GISD; invasive in Americas and Europe
+Crassostrea virginica	invasive	GISD+WRiMS	GISD listed, no account; WRiMS 23 alien localities, 4 invasive (Bahamas Exclusive Economic Zone; Bermudian Exclusive Economic Zone; Hawaiian part of the North Pacific Ocean; ...)	native	eastern oyster; native contrast with M. gigas
+Dreissena polymorpha	invasive	GISD+WRiMS	GISD account; WRiMS 27 alien localities, 12 invasive (Germany; Italy; Manche; ...)	invasive	zebra mussel; GISD
+Dreissena rostriformis bugensis	invasive	GISD+WRiMS	GISD account (as Dreissena bugensis); WRiMS 2 alien localities, 2 invasive (Austria; Ukrainian part of the Black Sea)	invasive	quagga mussel; invasive in North America and western Europe
+Mactra antiquata	native	WRiMS (no alien records)		native	
+Magallana angulata	introduced	WRiMS	WRiMS 2 alien localities, 0 invasive	introduced	Portuguese oyster; Asian origin, introduced to southern Europe
+Magallana gigas	invasive	GISD+WRiMS	GISD account (as Crassostrea gigas); WRiMS 8 alien localities, 3 invasive (French part of the English Channel; German part of the Baltic Sea; South African Coast)	invasive	Pacific oyster; GISD; spread from aquaculture worldwide
+Mercenaria mercenaria	invasive	WRiMS	WRiMS 25 alien localities, 2 invasive (Celtic Sea; North Sea)	introduced	hard clam; introduced to Europe for culture
+Mizuhopecten yessoensis	introduced	WRiMS	WRiMS 3 alien localities, 0 invasive	introduced	Yesso scallop; introduced to China for aquaculture
+Mya arenaria	invasive	GISD+WRiMS	GISD account; WRiMS 56 alien localities, 2 invasive (Romanian part of the Black Sea; San Francisco Bay)	introduced	softshell clam; historical introductions to Europe and the NE Pacific
+Mytilus californianus	native	WRiMS (no alien records)		native	
+Mytilus coruscus	native	WRiMS (no alien records)		native	
+Mytilus edulis	introduced	GISD+WRiMS	GISD listed, no account; WRiMS 4 alien localities, 0 invasive	native	
+Mytilus galloprovincialis	invasive	GISD+WRiMS	GISD account; WRiMS 30 alien localities, 7 invasive (Agulhas; Canadian part of the Coastal Waters of Southeast Alaska and British Columbia; East London; ...)	invasive	Mediterranean mussel; GISD; invasive in S Africa, Asia, NE Pacific
+Mytilus trossulus	introduced	GISD+WRiMS	GISD listed, no account; WRiMS 1 alien localities, 0 invasive	native	
+Ostrea edulis	invasive	GISD+WRiMS	GISD account; WRiMS 8 alien localities, 1 invasive (Australian Exclusive Economic Zone)	native	
+Pecten maximus	introduced	WRiMS	WRiMS 2 alien localities, 0 invasive	native	
+Perna viridis	invasive	GISD+WRiMS	GISD account; WRiMS 25 alien localities, 7 invasive (Australian part of the Indian Ocean; Brazilian part of the South Atlantic Ocean; Florida; ...)	invasive	Asian green mussel; GISD; invasive in Caribbean and SE USA
+Pinctada imbricata	introduced	override	WRiMS: no alien records as P. imbricata; the Lessepsian invader P. radiata (WRiMS invasive in Egypt, Tunisia) may or may not be the sequenced lineage	introduced	P. imbricata radiata is a Lessepsian invader in the Mediterranean; depends on which lineage was sequenced
+Potamilus streckersoni	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Ruditapes philippinarum	invasive	WRiMS	WRiMS 34 alien localities, 3 invasive (Portuguese part of the North Atlantic Ocean; Tunisian part of the Mediterranean Sea - Eastern Basin; Tunisian part of the Mediterranean Sea - Western Basin)	introduced	Manila clam; introduced widely for culture, invasive in some lagoons
+Saccostrea cuccullata	introduced	WRiMS	WRiMS 2 alien localities, 0 invasive	native	
+Saccostrea echinata	native	WRiMS (no alien records)		native	
+Sinanodonta woodiana	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	Chinese pond mussel; invasive in Europe
+Sinohyriopsis cumingii	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Solemya velum	native	WRiMS (no alien records)		native	
+Ylistrum balloti	native	WRiMS (no alien records)		native	
+Acyrthosiphon pisum	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	pea aphid; Palearctic, now cosmopolitan
+Adelges cooleyi	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	Cooley spruce gall adelgid; N American, introduced to Europe
+Aphis craccivora	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	cowpea aphid; cosmopolitan pest
+Aphis fabae	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	black bean aphid; cosmopolitan pest
+Aphis gossypii	invasive	WRiMS	WRiMS 1 alien localities, 1 invasive (Auckland Islands)	invasive	cotton aphid; cosmopolitan pest, on many invasive-species lists
+Apolygus lucorum	native	general knowledge (not in GISD; outside WRiMS scope)		native	green plant bug; Asian pest within native range
+Aquarius najas	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Bemisia tabaci	invasive	GISD	GISD account	invasive	silverleaf whitefly; GISD (MEAM1/MED biotypes)
+Cimex lectularius	uncertain	general knowledge (not in GISD; outside WRiMS scope)		uncertain	bed bug; cosmopolitan human-associated, not usually classed by range
+Cinara cedri	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	cedar aphid; spread with ornamental cedars
+Cyrpoptus belfragei	native	general knowledge (not in GISD; outside WRiMS scope)		native	Fulgoridae; native to US, not invasive
+Daktulosphaira vitifoliae	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	grape phylloxera; N American, invasive in Europe and worldwide
+Diuraphis noxia	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	Russian wheat aphid; invasive in S Africa and the Americas
+Gerris buenoi	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Halyomorpha halys	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	brown marmorated stink bug; invasive in N America and Europe
+Homalodisca vitripennis	invasive	GISD	GISD account	invasive	glassy-winged sharpshooter; invasive in California and Pacific islands
+Kerria lacca	native	general knowledge (not in GISD; outside WRiMS scope)		native	lac insect
+Laodelphax striatellus	native	general knowledge (not in GISD; outside WRiMS scope)		native	small brown planthopper; native Eurasian rice pest, not listed as invasive
+Lycorma delicatula	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	spotted lanternfly; invasive in Korea, Japan, USA
+Macrosiphum euphorbiae	invasive	WRiMS	WRiMS 7 alien localities, 7 invasive (Auckland Islands; Campbell Island; Crozet Islands; ...)	introduced	potato aphid; N American, introduced to Europe
+Macrosteles quadrilineatus	native	general knowledge (not in GISD; outside WRiMS scope)		native	aster leafhopper
+Melanaphis sacchari	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	sugarcane aphid; invaded US sorghum from 2013
+Metopolophium dirhodum	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	rose-grain aphid; Palearctic, introduced to the Americas and Australasia
+Myzus persicae	invasive	WRiMS	WRiMS 6 alien localities, 6 invasive (Antipodes Islands; Gough Island; Inaccessible Island; ...)	invasive	green peach aphid; cosmopolitan pest, on many invasive-species lists
+Nesidiocoris tenuis	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	predatory mirid; spread and released as biocontrol, also a crop pest
+Nezara viridula	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	southern green stink bug; cosmopolitan invasive pest
+Nilaparvata lugens	native	general knowledge (not in GISD; outside WRiMS scope)		native	brown planthopper; migratory pest within native Asian range
+Parthenolecanium corni	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	European fruit lecanium; cosmopolitan
+Planococcus citri	invasive	general knowledge (not in GISD; outside WRiMS scope)		invasive	citrus mealybug; cosmopolitan invasive pest
+Ranatra chinensis	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Rhodnius prolixus	native	general knowledge (not in GISD; outside WRiMS scope)		native	kissing bug
+Rhopalosiphum maidis	introduced	general knowledge (not in GISD; outside WRiMS scope)		introduced	corn leaf aphid; cosmopolitan
+Rhopalosiphum padi	invasive	WRiMS	WRiMS 14 alien localities, 14 invasive (Australian part of the Coral Sea; Crozet Islands part of the Indian Ocean; Kerguelen Islands part of the Indian Ocean; ...)	introduced	bird cherry-oat aphid; cosmopolitan
+Rhynocoris fuscipes	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Semiaphis heraclei	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Sipha flava	uncertain	general knowledge (not in GISD; outside WRiMS scope)		uncertain	yellow sugarcane aphid; American, introduced to Hawaii and elsewhere
+Sogatella furcifera	native	general knowledge (not in GISD; outside WRiMS scope)		native	white-backed planthopper; migratory pest within native Asian range
+Uroleucon formosanum	native	general knowledge (not in GISD; outside WRiMS scope)		native	
+Acanthaster planci	native	override	GISD account is for population outbreaks within the native Indo-Pacific range, not an alien introduction; WRiMS: 2 alien records, none invasive	native	crown-of-thorns; outbreaks within native range, not invasive
+Asterias amurensis	invasive	GISD+WRiMS	GISD account; WRiMS 5 alien localities, 3 invasive (Australian Exclusive Economic Zone; Australian part of the Great Australian Bight; Australian part of the Tasman Sea)	invasive	northern Pacific sea star; GISD; invasive in Australia
+Asterias rubens	introduced	WRiMS	WRiMS 3 alien localities, 0 invasive	native	
+Patiria miniata	native	WRiMS (no alien records)		native	
+Aplidium turbinatum	native	WRiMS (no alien records)		native	
+Ascidia mentula	native	WRiMS (no alien records)		native	
+Ascidiella aspersa	invasive	GISD+WRiMS	GISD account; WRiMS 34 alien localities, 5 invasive (Australian Exclusive Economic Zone; Knysna; New Zealand part of the South Pacific Ocean; ...)	invasive	invasive in N America, Australia, S America
+Botryllus schlosseri	invasive	WRiMS	WRiMS 68 alien localities, 8 invasive (Alexander Bay; Canada; Durban Bay; ...)	invasive	golden star tunicate; cosmopolitan fouling invader
+Ciona intestinalis	invasive	GISD+WRiMS	GISD account; WRiMS 58 alien localities, 15 invasive (Australian part of the Tasman Sea; Canadian part of the Gulf of St. Lawrence; Canadian part of the North Atlantic Ocean; ...)	invasive	GISD; fouling invader
+Ciona robusta	invasive	WRiMS	WRiMS 17 alien localities, 7 invasive (Chilean part of the South Pacific Ocean; Durban Bay; Montenegrian part of the Adriatic Sea; ...)	invasive	widely introduced fouling species (formerly C. intestinalis type A)
+Clavelina lepadiformis	invasive	WRiMS	WRiMS 19 alien localities, 3 invasive (Knysna; North Atlantic; Port Elizaberth (Harbour))	introduced	introduced to NE America and S Africa
+Corella eumyota	invasive	WRiMS	WRiMS 12 alien localities, 4 invasive (Portuguese part of the North Atlantic Ocean; Spanish part of the North Atlantic Ocean; United Kingdom part of the Celtic Sea; ...)	invasive	southern hemisphere species invading European coasts
+Halocynthia roretzi	introduced	WRiMS	WRiMS 1 alien localities, 0 invasive	native	
+Phallusia mammillata	native	WRiMS (no alien records)		native	
+Styela clava	invasive	GISD+WRiMS	GISD account; WRiMS 95 alien localities, 20 invasive (Australian part of the Bass Strait; Canadian part of the Gulf of St. Lawrence; Dutch part of the North Sea; ...)	invasive	clubbed tunicate; GISD
+Thalia democratica	native	WRiMS (no alien records)		native	pelagic salp
+Apis mellifera	introduced	GISD	GISD listed, no account	introduced	control; managed worldwide
+Drosophila melanogaster	invasive	WRiMS	WRiMS 1 alien localities, 1 invasive (Snares Islands)	introduced	control; cosmopolitan

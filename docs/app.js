@@ -808,7 +808,8 @@
     const s = pt.s, ax = pca.view === "3d" ? [pca.x, pca.y, pca.z] : [pca.x, pca.y];
     return [
       { l: `${s.organism} · ${s.group}${s.tier === "tsa" ? " · transcriptome" : ""}${pt.fit ? "" : ` · ${ROLE_LABEL[s.role] || s.role} (projected)`}` },
-      { key: INV_COLOR[s.invasion] ? css(INV_COLOR[s.invasion]) : undefined, v: s.invasion, l: s.invasion_basis ? `· ${s.invasion_basis}` : "" },
+      { key: INV_COLOR[s.invasion] ? css(INV_COLOR[s.invasion]) : undefined, v: s.invasion, l: s.invasion_source ? `· ${s.invasion_source}` : "" },
+      ...(s.invasion_basis ? [{ l: s.invasion_basis }] : []),
       { l: ax.map((i) => `PC${i + 1} ${pt.pc[i] >= 0 ? "+" : ""}${pt.pc[i].toFixed(2)}`).join("   ") },
     ];
   }
@@ -968,7 +969,7 @@
       const verdict = t.p < 0.05 ? "Invasive species sit apart from the comparison species more than shuffled labels would (p < 0.05)."
         : "No clear separation: invasive species are no further from the comparison species than shuffled labels.";
       box.append(el("p", { class: "test-sum" }, `${verdict} Distance between group centroids in the full profile space` +
-        `${pca.set === "summary" ? " (in robust SD units)" : ""}; p from 4,999 within-clade shuffles. Labels are provisional.`));
+        `${pca.set === "summary" ? " (in robust SD units)" : ""}; p from 4,999 within-clade shuffles. Labels: GISD and WRiMS where they cover the species.`));
     }
     // loadings
     const lb = $("pca-load");

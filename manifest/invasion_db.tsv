@@ -1,0 +1,107 @@
+# GISD and WRiMS evidence per species, written by scripts/check_invasion_dbs.py on 2026-11-27
+species	gisd	gisd_name	worms	aphia_id	marine_or_brackish	wrims_alien_localities	wrims_invasive_localities	wrims_invasive_places
+Acropora cervicornis	absent		in_worms	206989	yes	0	0	
+Acropora millepora	absent		in_worms	207023	yes	0	0	
+Acropora muricata	absent		in_worms	207007	yes	0	0	
+Acropora palmata	absent		in_worms	288227	yes	0	0	
+Cyphastrea microphthalma	absent		in_worms	207416	yes	0	0	
+Desmophyllum pertusum	absent		in_worms	1245747	yes	0	0	
+Madrepora oculata	absent		in_worms	135209	yes	0	0	
+Montipora capricornis	absent		in_worms	287698	yes	0	0	
+Montipora foliosa	absent		in_worms	207182	yes	0	0	
+Oculina patagonica	absent		in_worms	135210	yes	13	2	Algerian part of the Alboran Sea; Tunisian part of the Mediterranean Sea - Western Basin
+Orbicella faveolata	absent		in_worms	758261	yes	0	0	
+Orbicella franksi	absent		in_worms	758262	yes	0	0	
+Pavona decussata	absent		in_worms	207320	yes	0	0	
+Pocillopora damicornis	absent		in_worms	206953	yes	0	0	
+Pocillopora meandrina	absent		in_worms	206964	yes	0	0	
+Pocillopora verrucosa	absent		in_worms	206954	yes	0	0	
+Porites evermanni	absent		in_worms	288900	yes	0	0	
+Porites harrisoni	absent		in_worms	288904	yes	0	0	
+Porites lobata	absent		in_worms	207225	yes	0	0	
+Porites lutea	absent		in_worms	207246	yes	0	0	
+Stylophora pistillata	absent		in_worms	206982	yes	0	0	
+Argopecten irradians	absent		in_worms	156817	yes	6	0	
+Corbicula fluminea	account	Corbicula fluminea	in_worms	181580	no	16	6	Canadian part of the Coastal Waters of Southeast Alaska and British Columbia; Irish part of the North Atlantic Ocean; Mexican part of the Gulf of Mexico; Portuguese part of the North Atlantic Ocean; Spanish part of the North Atlantic Ocean; United Kingdom part of the North Sea
+Crassostrea virginica	stub	Crassostrea virginica	in_worms	140657	yes	23	4	Bahamas Exclusive Economic Zone; Bermudian Exclusive Economic Zone; Hawaiian part of the North Pacific Ocean; North Sea
+Dreissena polymorpha	account	Dreissena polymorpha	in_worms	181566	yes	27	12	Germany; Italy; Manche; Russian part of the Sea of Azov; Spain; Sweden; Swedish part of the Baltic Sea; United Kingdom
+Dreissena rostriformis bugensis	account	Dreissena bugensis	in_worms	505319	yes	2	2	Austria; Ukrainian part of the Black Sea
+Mactra antiquata	absent		in_worms	505711	yes	0	0	
+Magallana angulata	absent		in_worms	1039387	yes	2	0	
+Magallana gigas	account	Crassostrea gigas	in_worms	836033	yes	8	3	French part of the English Channel; German part of the Baltic Sea; South African Coast
+Mercenaria mercenaria	absent		in_worms	141919	yes	25	2	Celtic Sea; North Sea
+Mizuhopecten yessoensis	absent		in_worms	393716	yes	3	0	
+Mya arenaria	account	Mya arenaria	in_worms	140430	yes	56	2	Romanian part of the Black Sea; San Francisco Bay
+Mytilus californianus	absent		in_worms	367837	yes	0	0	
+Mytilus coruscus	absent		in_worms	506159	yes	0	0	
+Mytilus edulis	stub	Mytilus edulis	in_worms	140480	yes	4	0	
+Mytilus galloprovincialis	account	Mytilus galloprovincialis	in_worms	140481	yes	30	7	Agulhas; Canadian part of the Coastal Waters of Southeast Alaska and British Columbia; East London; South African Exclusive Economic Zone; South African part of the Indian Ocean; South African part of the South Atlantic Ocean
+Mytilus trossulus	stub	Mytilus trossulus	in_worms	140482	yes	1	0	
+Ostrea edulis	account	Ostrea edulis	in_worms	140658	yes	8	1	Australian Exclusive Economic Zone
+Pecten maximus	absent		in_worms	140712	yes	2	0	
+Perna viridis	account	Perna viridis	in_worms	367822	yes	25	7	Australian part of the Indian Ocean; Brazilian part of the South Atlantic Ocean; Florida; Jamaican Exclusive Economic Zone; Jamaican part of the Caribbean Sea; Trinidad and Tobago Exclusive Economic Zone; United States part of the Gulf of Mexico
+Pinctada imbricata	absent		in_worms	207901	yes	0	0	
+Potamilus streckersoni	absent		in_worms	1356337	no	0	0	
+Ruditapes philippinarum	absent		in_worms	231750	yes	34	3	Portuguese part of the North Atlantic Ocean; Tunisian part of the Mediterranean Sea - Eastern Basin; Tunisian part of the Mediterranean Sea - Western Basin
+Saccostrea cuccullata	absent		in_worms	181316	yes	2	0	
+Saccostrea echinata	absent		in_worms	506736	yes	0	0	
+Sinanodonta woodiana	absent		in_worms	857498	no	0	0	
+Sinohyriopsis cumingii	absent		in_worms	1251115	no	0	0	
+Solemya velum	absent		in_worms	156994	yes	0	0	
+Ylistrum balloti	absent		in_worms	821597	yes	0	0	
+Acyrthosiphon pisum	absent		not_in_worms					
+Adelges cooleyi	absent		not_in_worms					
+Aphis craccivora	absent		in_worms	1489060	no	0	0	
+Aphis fabae	absent		in_worms	1489061	no	0	0	
+Aphis gossypii	absent		in_worms	990719	no	1	1	Auckland Islands
+Apolygus lucorum	absent		not_in_worms					
+Aquarius najas	absent		not_in_worms					
+Bemisia tabaci	account	Bemisia tabaci	in_worms	1489088	no	0	0	
+Cimex lectularius	absent		in_worms	1488812	no	0	0	
+Cinara cedri	absent		not_in_worms					
+Cyrpoptus belfragei	absent		not_in_worms					
+Daktulosphaira vitifoliae	absent		in_worms	1489336	no	0	0	
+Diuraphis noxia	absent		not_in_worms					
+Gerris buenoi	absent		not_in_worms					
+Halyomorpha halys	absent		not_in_worms					
+Homalodisca vitripennis	account	Homalodisca vitripennis	not_in_worms					
+Kerria lacca	absent		not_in_worms					
+Laodelphax striatellus	absent		not_in_worms					
+Lycorma delicatula	absent		not_in_worms					
+Macrosiphum euphorbiae	absent		in_worms	990729	no	7	7	Auckland Islands; Campbell Island; Crozet Islands; East Falkland Islands; Marion Island; West Falkland Islands
+Macrosteles quadrilineatus	absent		in_worms	1489180	no	0	0	
+Melanaphis sacchari	absent		not_in_worms					
+Metopolophium dirhodum	absent		not_in_worms					
+Myzus persicae	absent		in_worms	990733	no	6	6	Antipodes Islands; Gough Island; Inaccessible Island; Kerguelen Islands; Snares Islands
+Nesidiocoris tenuis	absent		not_in_worms					
+Nezara viridula	absent		in_worms	1488869	no	0	0	
+Nilaparvata lugens	absent		not_in_worms					
+Parthenolecanium corni	absent		not_in_worms					
+Planococcus citri	absent		in_worms	1489352	no	0	0	
+Ranatra chinensis	absent		not_in_worms					
+Rhodnius prolixus	absent		not_in_worms					
+Rhopalosiphum maidis	absent		in_worms	1489140	no	0	0	
+Rhopalosiphum padi	absent		in_worms	990742	no	14	14	Australian part of the Coral Sea; Crozet Islands part of the Indian Ocean; Kerguelen Islands part of the Indian Ocean; Macquarie Island part of the South Pacific Ocean; New Zealand part of the South Pacific Ocean; Overlapping claim Falkland / Malvinas Islands: United Kingdom / Argentina part of the South Atlantic Ocean; Prince Edward Islands part of the Indian Ocean; South Georgia
+Rhynocoris fuscipes	absent		not_in_worms					
+Semiaphis heraclei	absent		not_in_worms					
+Sipha flava	absent		in_worms	1489143	no	0	0	
+Sogatella furcifera	absent		not_in_worms					
+Uroleucon formosanum	absent		not_in_worms					
+Acanthaster planci	account	Acanthaster planci	in_worms	213289	yes	2	0	
+Asterias amurensis	account	Asterias amurensis	in_worms	254497	yes	5	3	Australian Exclusive Economic Zone; Australian part of the Great Australian Bight; Australian part of the Tasman Sea
+Asterias rubens	absent		in_worms	123776	yes	3	0	
+Patiria miniata	absent		in_worms	382131	yes	0	0	
+Aplidium turbinatum	absent		in_worms	103670	yes	0	0	
+Ascidia mentula	absent		in_worms	103710	yes	0	0	
+Ascidiella aspersa	account	Ascidiella aspersa	in_worms	103718	yes	34	5	Australian Exclusive Economic Zone; Knysna; New Zealand part of the South Pacific Ocean; Table Bay; United States part of the North Atlantic Ocean
+Botryllus schlosseri	absent		in_worms	103862	yes	68	8	Alexander Bay; Canada; Durban Bay; United States part of the North Atlantic Ocean; United States part of the North Pacific Ocean
+Ciona intestinalis	account	Ciona intestinalis	in_worms	103732	yes	58	15	Australian part of the Tasman Sea; Canadian part of the Gulf of St. Lawrence; Canadian part of the North Atlantic Ocean; Chile; Chinese part of the South China Sea; Hong Kong; Japan; South African Exclusive Economic Zone
+Ciona robusta	absent		in_worms	252565	yes	17	7	Chilean part of the South Pacific Ocean; Durban Bay; Montenegrian part of the Adriatic Sea; South African Exclusive Economic Zone; South African part of the Indian Ocean; Tunisian part of the Mediterranean Sea - Eastern Basin; Tunisian part of the Mediterranean Sea - Western Basin
+Clavelina lepadiformis	absent		in_worms	103552	yes	19	3	Knysna; North Atlantic; Port Elizaberth (Harbour)
+Corella eumyota	absent		in_worms	173223	yes	12	4	Portuguese part of the North Atlantic Ocean; Spanish part of the North Atlantic Ocean; United Kingdom part of the Celtic Sea; United Kingdom part of the English Channel
+Halocynthia roretzi	absent		in_worms	250680	yes	1	0	
+Phallusia mammillata	absent		in_worms	103724	yes	0	0	
+Styela clava	account	Styela clava	in_worms	103929	yes	95	20	Australian part of the Bass Strait; Canadian part of the Gulf of St. Lawrence; Dutch part of the North Sea; German part of the North Sea; Irish part of the Celtic Sea; New Zealand part of the South Pacific Ocean; United Kingdom part of the Celtic Sea; United Kingdom part of the English Channel
+Thalia democratica	absent		in_worms	137279	yes	0	0	
+Apis mellifera	stub	Apis mellifera	in_worms	1490237	no	0	0	
+Drosophila melanogaster	absent		in_worms	987722	no	1	1	Snares Islands

@@ -6,7 +6,7 @@ Usage:  uv run python analysis/build_dashboard.py [--results results] [--out doc
 
 Only summaries go into the JSON (fits, binned histograms, GO Slim statistics, validation
 statistics, covariate check), so the page stays small and no sequence data is published.
-Provisional trait labels (invasion status) are read from manifest/traits.tsv.
+Invasion status is read from manifest/traits.tsv (see scripts/check_invasion_dbs.py).
 The covariate check is read from analysis/covariate_check.tsv and covariate_check_wgbs.tsv
 (written by analysis/covariate_check.py) when they exist.
 """
@@ -39,13 +39,19 @@ def manifest(path: Path) -> dict[str, dict]:
 
 
 def traits(path: Path) -> dict[str, dict]:
-    """manifest/traits.tsv keyed by species name (provisional invasion status)."""
+    """manifest/traits.tsv keyed by species name (invasion status, from GISD/WRiMS where covered)."""
     if not path.exists():
         return {}
     with open(path) as fh:
         rows = csv.DictReader((l for l in fh if not l.startswith("#")), delimiter="\t")
-        return {r["species"]: {"invasion": r["invasion"], "invasion_basis": r.get("basis") or ""}
-                for r in rows if r.get("species")}
+        out = {}
+        for r in rows:
+            if not r.get("species"):
+                continue
+            basis = " · ".join(x for x in (r.get("evidence"), r.get("notes") or r.get("basis")) if x)
+            out[r["species"]] = {"invasion": r["invasion"], "invasion_source": r.get("source") or "",
+                                 "invasion_basis": basis}
+        return out
 
 
 def histograms(features_tsv: Path) -> dict[str, list[int]]:

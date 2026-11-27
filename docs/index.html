@@ -129,10 +129,16 @@
           shuffles of the labels <em>within</em> clades, so clade differences cannot create a
           signal. It does not control relatedness inside a clade (e.g. many aphids), and
           invasion depends on opportunity as well as biology.</li>
-        <li><strong>Invasion labels are provisional</strong> (<code>manifest/traits.tsv</code>):
-          drafted from general knowledge and not yet checked against GISD, WRiMS or NEMESIS.
-          "Introduced" marks species established outside their range but not usually called
-          invasive (often aquaculture or cosmopolitan pests). Hover a point for the basis.</li>
+        <li><strong>Invasion labels</strong> (<code>manifest/traits.tsv</code>) come from the IUCN
+          Global Invasive Species Database (GISD) and the World Register of Introduced Marine
+          Species (WRiMS), checked 2026-11-27 by <code>scripts/check_invasion_dbs.py</code>.
+          <em>Invasive</em>: a GISD account describing the species as an alien, or at least one
+          WRiMS locality flagged invasive or of concern. <em>Introduced</em>: non-native records
+          but none flagged invasive. <em>Native</em>: a marine or brackish species with no
+          non-native records. The bar for "invasive" is low: one flagged locality is enough, so
+          <em>Crassostrea virginica</em> and <em>Ostrea edulis</em> count as invasive. Most
+          insects and freshwater mussels are outside both databases; they keep a label drafted
+          from general knowledge (source shown on hover). NEMESIS and CABI were not checked.</li>
       </ul>
     </details>
   </section>
