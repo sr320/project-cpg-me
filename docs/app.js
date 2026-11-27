@@ -196,6 +196,7 @@
     $("species-select").value = acc;
     renderTable();
     renderDist();
+    renderPCA();
     if (scroll) $("h-dist").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -542,12 +543,443 @@
     box.append(wrap, el("p", { class: "note" }, "Low class: posterior probability > 0.5 for the low CpG O/E mixture component. Methylated gene: weighted methylation ≥ 0.5."));
   }
 
+  // ---------- trait space (PCA) ----------
+  const CLADES = ["coral", "bivalve", "hemiptera", "tunicate", "seastar", "control"];
+  const INV = ["invasive", "introduced", "native", "uncertain"];
+  const INV_COLOR = { invasive: "--cat-2", introduced: "--cat-4", native: "--cat-1", uncertain: "--muted" };
+  const pca = { set: "summary", feat: "gene_body", clade: "all", center: false, color: "group", view: "2d",
+                x: 0, y: 1, z: 2, cmp: "native", centroids: true, hidden: new Set(), rot: null, res: null };
+  const SUMMARY = [
+    ["median", "median", (f) => f.median], ["mean", "mean", (f) => f.mean],
+    ["low_mean", "low mode, mean", (f) => f.low_mean], ["high_mean", "high mode, mean", (f) => f.high_mean],
+    ["low_sd", "low mode, SD", (f) => f.low_sd], ["high_sd", "high mode, SD", (f) => f.high_sd],
+    ["low_weight", "low mode, share", (f) => f.low_weight], ["frac_low", "low posterior share", (f) => f.frac_low_posterior],
+    ["ashman_d", "Ashman's D", (f) => f.ashman_d],
+    ["dbic", "log ΔBIC", (f) => (f.delta_bic == null ? null : Math.sign(f.delta_bic) * Math.log10(1 + Math.abs(f.delta_bic)))],
+    ["gpc", "GpC O/E median", (f) => f.gpc_oe_median],
+  ];
+
+  // Jacobi eigen-decomposition of a symmetric matrix; returns eigenpairs sorted by value, descending.
+  function eigSym(M) {
+    const n = M.length, A = M.map((r) => r.slice()), V = A.map((_, i) => A.map((__, j) => (i === j ? 1 : 0)));
+    for (let sweep = 0; sweep < 60; sweep++) {
+      let off = 0;
+      for (let i = 0; i < n; i++) for (let j = i + 1; j < n; j++) off += A[i][j] ** 2;
+      if (off < 1e-20) break;
+      for (let p = 0; p < n; p++) for (let q = p + 1; q < n; q++) {
+        if (Math.abs(A[p][q]) < 1e-18) continue;
+        const th = (A[q][q] - A[p][p]) / (2 * A[p][q]);
+        const t = Math.sign(th || 1) / (Math.abs(th) + Math.sqrt(th * th + 1)), c = 1 / Math.sqrt(t * t + 1), s = t * c;
+        for (let k = 0; k < n; k++) { const a = A[k][p], b = A[k][q]; A[k][p] = c * a - s * b; A[k][q] = s * a + c * b; }
+        for (let k = 0; k < n; k++) { const a = A[p][k], b = A[q][k]; A[p][k] = c * a - s * b; A[q][k] = s * a + c * b; }
+        for (let k = 0; k < n; k++) { const a = V[k][p], b = V[k][q]; V[k][p] = c * a - s * b; V[k][q] = s * a + c * b; }
+      }
+    }
+    return A.map((_, i) => ({ val: Math.max(0, A[i][i]), vec: V.map((r) => r[i]) })).sort((a, b) => b.val - a.val);
+  }
+
+  // Seeded RNG so the permutation p-value does not jitter between renders.
+  function rng(seed) { let s = seed >>> 0; return () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296); }
+
+  function profile(sp, f) {
+    const d = state.data;
+    if (pca.set === "summary") {
+      const fit = sp.fits[f];
+      if (!fit) return null;
+      const v = SUMMARY.map(([, , g]) => g(fit));
+      v.push(sp.goslim_test?.[f]?.rank_biserial ?? null);
+      return v.some((x) => x == null || Number.isNaN(x)) ? null : v;
+    }
+    if (pca.set === "shape") {
+      const h = sp.hist[f];
+      if (!h) return null;
+      const n = h.reduce((a, b) => a + b, 0);
+      return n ? h.map((c) => c / n) : null;
+    }
+    const g = d.goslim[f];
+    if (!g || !pca._goslimBySp?.[f]) return null;
+    return pca._goslimBySp[f].get(d.species.indexOf(sp)) || null;
+  }
+  function featureNames(f) {
+    if (pca.set === "summary") return [...SUMMARY.map((x) => x[1]), "HK vs IND effect"];
+    if (pca.set === "shape") return state.data.bins.slice(0, -1).map((b, i) => `CpG O/E ${b.toFixed(3)}–${state.data.bins[i + 1].toFixed(3)}`);
+    return state.data.goslim[f].terms.map((t) => t.name);
+  }
+
+  function computePCA() {
+    const d = state.data, f = pca.feat;
+    if (pca.set === "goslim" && !pca._goslimBySp) {
+      pca._goslimBySp = {};
+      for (const [ff, g] of Object.entries(d.goslim)) {
+        const m = new Map();
+        for (const [ti, si, shift] of g.cells) {
+          if (!m.has(si)) m.set(si, new Array(g.terms.length).fill(0));
+          m.get(si)[ti] = shift;
+        }
+        pca._goslimBySp[ff] = m;
+      }
+    }
+    const inClade = (s) => pca.clade === "all" || s.group === pca.clade;
+    const pts = [], dropped = [];
+    for (const s of d.species) {
+      if (!inClade(s)) continue;
+      const v = profile(s, f);
+      const fit = s.role === "focal";
+      if (!v) { if (fit) dropped.push(s); continue; }
+      if (!fit && pca.center && pca.clade === "all" && s.group === "control") continue;
+      pts.push({ s, v, fit });
+    }
+    const train = pts.filter((p) => p.fit);
+    const p = train[0]?.v.length || 0;
+    if (train.length < 4 || !p) return { empty: true, dropped };
+    // clade means (from fitted species), optionally removed
+    const cmean = {};
+    for (const c of CLADES) {
+      const rows = train.filter((t) => t.s.group === c);
+      if (rows.length) cmean[c] = rows[0].v.map((_, j) => rows.reduce((a, r) => a + r.v[j], 0) / rows.length);
+    }
+    const base = (pt) => (pca.center && pca.clade === "all" && cmean[pt.s.group]
+      ? pt.v.map((x, j) => x - cmean[pt.s.group][j]) : pt.v.slice());
+    for (const pt of pts) pt.b = base(pt);
+    const mu = new Array(p).fill(0), sd = new Array(p).fill(1);
+    for (const t of train) t.b.forEach((x, j) => { mu[j] += x / train.length; });
+    let clip = Infinity;
+    if (pca.set === "summary") {
+      // Robust scaling: median / MAD, clipped at ±3, so one degenerate mixture fit
+      // (e.g. a "mode" made of a single gene) cannot dominate a component.
+      const med = (a) => { const b = [...a].sort((x, y) => x - y), h = b.length >> 1; return b.length % 2 ? b[h] : (b[h - 1] + b[h]) / 2; };
+      for (let j = 0; j < p; j++) {
+        const col = train.map((t) => t.b[j]);
+        mu[j] = med(col);
+        const mad = 1.4826 * med(col.map((x) => Math.abs(x - mu[j])));
+        sd[j] = mad > 1e-12 ? mad : 1;
+      }
+      clip = 3;
+    }
+    for (const pt of pts) pt.z = pt.b.map((x, j) => Math.max(-clip, Math.min(clip, (x - mu[j]) / sd[j])));
+    if (clip < Infinity) { // re-centre clipped scores so the PCA is on a centred matrix
+      const m2 = new Array(p).fill(0);
+      for (const t of train) t.z.forEach((x, j) => { m2[j] += x / train.length; });
+      for (const pt of pts) pt.z = pt.z.map((x, j) => x - m2[j]);
+    }
+    const C = Array.from({ length: p }, () => new Array(p).fill(0));
+    for (const t of train) for (let i = 0; i < p; i++) { const zi = t.z[i]; if (!zi) continue; for (let j = i; j < p; j++) C[i][j] += zi * t.z[j]; }
+    for (let i = 0; i < p; i++) for (let j = i; j < p; j++) { C[i][j] /= train.length - 1; C[j][i] = C[i][j]; }
+    const eig = eigSym(C).slice(0, Math.min(10, p, train.length - 1));
+    for (const e of eig) { // orient: largest |loading| positive
+      let k = 0; e.vec.forEach((x, j) => { if (Math.abs(x) > Math.abs(e.vec[k])) k = j; });
+      if (e.vec[k] < 0) e.vec = e.vec.map((x) => -x);
+    }
+    const total = C.reduce((a, r, i) => a + r[i], 0);
+    for (const pt of pts) pt.pc = eig.map((e) => e.vec.reduce((a, w, j) => a + w * pt.z[j], 0));
+    return { pts, train, eig, total, names: featureNames(f), dropped };
+  }
+
+  // Within-clade permutation test of invasive vs comparison centroids in the full (scaled) profile space.
+  function invasionTest(res) {
+    const lab = (s) => {
+      const st = s.invasion;
+      if (pca.cmp === "native") return st === "invasive" ? 1 : st === "native" ? 0 : null;
+      if (pca.cmp === "nonnative") return st === "invasive" ? 1 : st === "native" || st === "introduced" ? 0 : null;
+      return st === "invasive" || st === "introduced" ? 1 : st === "native" ? 0 : null; // any non-native vs native
+    };
+    const strata = [];
+    for (const c of CLADES) {
+      const rows = res.train.filter((t) => t.s.group === c && lab(t.s) !== null);
+      const n1 = rows.filter((r) => lab(r.s) === 1).length, n0 = rows.length - n1;
+      if (n1 && n0) strata.push({ c, rows: rows.map((r) => r.z), y: rows.map((r) => lab(r.s)), n1, n0 });
+    }
+    if (!strata.length) return null;
+    const dist = (rows, y) => {
+      const p = rows[0].length, a = new Array(p).fill(0), b = new Array(p).fill(0);
+      let na = 0, nb = 0;
+      rows.forEach((r, i) => { if (y[i]) { na++; r.forEach((x, j) => (a[j] += x)); } else { nb++; r.forEach((x, j) => (b[j] += x)); } });
+      return Math.sqrt(a.reduce((s, x, j) => s + (x / na - b[j] / nb) ** 2, 0));
+    };
+    const w = strata.map((st) => (st.n1 * st.n0) / (st.n1 + st.n0)), W = w.reduce((a, b) => a + b, 0);
+    const obs = strata.map((st) => dist(st.rows, st.y));
+    const T = obs.reduce((a, x, i) => a + w[i] * x, 0) / W;
+    const B = 4999, r = rng(20261127), ge = strata.map(() => 0);
+    let geT = 0;
+    for (let b = 0; b < B; b++) {
+      let t = 0;
+      strata.forEach((st, i) => {
+        const y = st.y.slice();
+        for (let k = y.length - 1; k > 0; k--) { const j = Math.floor(r() * (k + 1)); [y[k], y[j]] = [y[j], y[k]]; }
+        const dd = dist(st.rows, y);
+        if (dd >= obs[i] - 1e-12) ge[i]++;
+        t += w[i] * dd;
+      });
+      if (t / W >= T - 1e-12) geT++;
+    }
+    return { strata: strata.map((st, i) => ({ ...st, d: obs[i], p: (ge[i] + 1) / (B + 1) })), T, p: (geT + 1) / (B + 1) };
+  }
+
+  const shapePath = (st, x, y, r) => {
+    if (st === "invasive") { const h = r * 1.25; return `M${x},${y - h}L${x + h * 0.95},${y + h * 0.65}L${x - h * 0.95},${y + h * 0.65}Z`; }
+    if (st === "introduced") { const h = r * 1.2; return `M${x},${y - h}L${x + h},${y}L${x},${y + h}L${x - h},${y}Z`; }
+    if (st === "uncertain") { const h = r * 0.8; return `M${x - h},${y - h}h${2 * h}v${2 * h}h${-2 * h}Z`; }
+    return `M${x - r},${y}a${r},${r} 0 1,0 ${2 * r},0a${r},${r} 0 1,0 ${-2 * r},0`;
+  };
+  const markColor = (s) => css(pca.color === "group" ? `--cat-${CLADES.indexOf(s.group) + 1}` : INV_COLOR[s.invasion] || "--muted");
+
+  function renderPCA() {
+    const d = state.data;
+    // controls
+    const hasF = (f) => d.species.some((s) => (pca.set === "goslim" ? d.goslim[f] : s.fits[f]));
+    if (!hasF(pca.feat)) pca.feat = "cds";
+    const feats = pca.set === "goslim" ? ["gene_body", "cds"] : ["gene_body", "cds", "upstream"];
+    if (!feats.includes(pca.feat)) pca.feat = "gene_body";
+    segmented($("pca-feat-seg"), feats.map((f) => [f, FEATURE_LABEL[f], hasF(f)]), pca.feat, (f) => { pca.feat = f; renderPCA(); });
+    segmented($("pca-color-seg"), [["group", "Clade", true], ["invasion", "Invasion", true]], pca.color, (c) => { pca.color = c; pca.hidden.clear(); renderPCA(); });
+    segmented($("pca-view-seg"), [["2d", "2D", true], ["3d", "3D", true]], pca.view, (v) => { pca.view = v; renderPCA(); });
+    segmented($("pca-cmp-seg"), [["native", "vs native", true], ["nonnative", "vs all others", true], ["any", "non-native vs native", true]],
+      pca.cmp, (c) => { pca.cmp = c; renderPCA(); });
+    $("pca-z-wrap").hidden = pca.view !== "3d";
+    $("pca-center").disabled = pca.clade !== "all";
+
+    const res = computePCA();
+    pca.res = res;
+    if (res.empty) {
+      $("pca-chart").replaceChildren(el("p", { class: "empty" }, "Too few species with this profile for a PCA."));
+      for (const id of ["pca-legend", "pca-test", "pca-load", "pca-scree"]) $(id).replaceChildren();
+      $("pca-note").textContent = "";
+      return;
+    }
+    const k = res.eig.length;
+    for (const [id, key] of [["pca-x", "x"], ["pca-y", "y"], ["pca-z", "z"]]) {
+      const sel = $(id);
+      if (pca[key] >= k) pca[key] = Math.min(k - 1, { x: 0, y: 1, z: 2 }[key]);
+      sel.replaceChildren(...res.eig.map((e, i) => el("option", { value: i }, `PC${i + 1} (${Math.round((100 * e.val) / res.total)} %)`)));
+      sel.value = pca[key];
+    }
+    if (pca.view === "3d") draw3D(res); else draw2D(res);
+    renderPcaLegend(res);
+    renderPcaSide(res);
+    const nFit = res.train.length, nProj = res.pts.length - nFit;
+    $("pca-note").textContent = `${nFit} focal species fitted` + (nProj ? `, ${nProj} projected (hollow)` : "") +
+      (res.dropped.length ? `. Not in this view (no ${FEATURE_LABEL[pca.feat].toLowerCase()} profile): ${res.dropped.map((s) => s.organism).join(", ")}.` : ".") +
+      (pca.view === "3d" ? " Drag to rotate." : "");
+  }
+
+  function pointTip(pt) {
+    const s = pt.s, ax = pca.view === "3d" ? [pca.x, pca.y, pca.z] : [pca.x, pca.y];
+    return [
+      { l: `${s.organism} · ${s.group}${s.tier === "tsa" ? " · transcriptome" : ""}${pt.fit ? "" : ` · ${ROLE_LABEL[s.role] || s.role} (projected)`}` },
+      { key: INV_COLOR[s.invasion] ? css(INV_COLOR[s.invasion]) : undefined, v: s.invasion, l: s.invasion_basis ? `· ${s.invasion_basis}` : "" },
+      { l: ax.map((i) => `PC${i + 1} ${pt.pc[i] >= 0 ? "+" : ""}${pt.pc[i].toFixed(2)}`).join("   ") },
+    ];
+  }
+  const visible = (s) => !pca.hidden.has(pca.color === "group" ? s.group : s.invasion);
+
+  function addMark(svg, pt, x, y, r, opacity = 1) {
+    const s = pt.s, color = markColor(s), sel = s.accession === state.species;
+    const g = sv("g", { opacity: visible(s) ? opacity : 0.08 });
+    g.append(sv("path", { d: shapePath(s.invasion, x, y, r), fill: pt.fit ? color : css("--surface"),
+      stroke: pt.fit ? css("--surface") : color, "stroke-width": pt.fit ? 1.5 : 2 }));
+    if (sel) g.append(sv("circle", { cx: x, cy: y, r: r + 5, fill: "none", stroke: css("--ink"), "stroke-width": 1.5 }));
+    if (visible(s)) {
+      const hit = sv("circle", { cx: x, cy: y, r: Math.max(10, r + 4), fill: "transparent", style: "cursor:pointer" });
+      hoverable(hit, () => pointTip(pt));
+      hit.addEventListener("click", () => selectSpecies(s.accession, false));
+      g.append(hit);
+    }
+    svg.append(g);
+    return g;
+  }
+
+  function draw2D(res) {
+    const box = $("pca-chart"), W = Math.max(300, box.clientWidth), H = Math.min(560, Math.max(320, W * 0.72));
+    box.classList.remove("rot");
+    const m = { l: 40, r: 14, t: 12, b: 36 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+    const xs = res.pts.map((p) => p.pc[pca.x]), ys = res.pts.map((p) => p.pc[pca.y]);
+    const pad = (lo, hi) => { const r = hi - lo || 1; return [lo - r * 0.06, hi + r * 0.06]; };
+    const [x0, x1] = pad(Math.min(...xs), Math.max(...xs)), [y0, y1] = pad(Math.min(...ys), Math.max(...ys));
+    const X = (v) => m.l + ((v - x0) / (x1 - x0)) * iw, Y = (v) => m.t + ih - ((v - y0) / (y1 - y0)) * ih;
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `PCA scatter, PC${pca.x + 1} vs PC${pca.y + 1}` });
+    const ticks = (lo, hi) => { const st = 10 ** Math.floor(Math.log10((hi - lo) / 4)); const step = [1, 2, 5, 10].map((f) => f * st).find((s) => (hi - lo) / s <= 6); const out = []; for (let t = Math.ceil(lo / step) * step; t <= hi; t += step) out.push(+t.toFixed(10)); return out; };
+    for (const t of ticks(x0, x1)) {
+      svg.append(sv("line", { x1: X(t), x2: X(t), y1: m.t, y2: m.t + ih, stroke: t === 0 ? css("--axis") : css("--grid") }));
+      svg.append(sv("text", { x: X(t), y: m.t + ih + 14, "text-anchor": "middle", class: "tick-label" }, String(t)));
+    }
+    for (const t of ticks(y0, y1)) {
+      svg.append(sv("line", { x1: m.l, x2: m.l + iw, y1: Y(t), y2: Y(t), stroke: t === 0 ? css("--axis") : css("--grid") }));
+      svg.append(sv("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end", class: "tick-label" }, String(t)));
+    }
+    const pct = (i) => Math.round((100 * res.eig[i].val) / res.total);
+    svg.append(sv("text", { x: m.l + iw, y: H - 2, "text-anchor": "end", class: "ink2" }, `PC${pca.x + 1} (${pct(pca.x)} % of variance) →`));
+    svg.append(sv("text", { x: 12, y: m.t + 4, transform: `rotate(-90 12 ${m.t + 4})`, "text-anchor": "end", class: "ink2" }, `PC${pca.y + 1} (${pct(pca.y)} %) →`));
+    // clade centroids: native/comparison (ring) -> invasive (triangle), joined
+    if (pca.centroids) {
+      for (const c of CLADES) {
+        const rows = res.train.filter((t) => t.s.group === c);
+        const inv = rows.filter((t) => t.s.invasion === "invasive"), nat = rows.filter((t) => t.s.invasion === "native");
+        if (!inv.length || !nat.length || pca.hidden.has(c)) continue;
+        const cen = (a) => [a.reduce((s, t) => s + t.pc[pca.x], 0) / a.length, a.reduce((s, t) => s + t.pc[pca.y], 0) / a.length];
+        const [ix, iy] = cen(inv), [nx, ny] = cen(nat), col = css(`--cat-${CLADES.indexOf(c) + 1}`);
+        svg.append(sv("line", { x1: X(nx), y1: Y(ny), x2: X(ix), y2: Y(iy), stroke: col, "stroke-width": 2, "stroke-dasharray": "5 4", opacity: 0.8 }));
+        svg.append(sv("path", { d: shapePath("native", X(nx), Y(ny), 9), fill: "none", stroke: col, "stroke-width": 2.5 }));
+        svg.append(sv("path", { d: shapePath("invasive", X(ix), Y(iy), 10), fill: "none", stroke: col, "stroke-width": 2.5 }));
+      }
+    }
+    const order = [...res.pts].sort((a, b) => (a.s.accession === state.species) - (b.s.accession === state.species));
+    for (const pt of order) addMark(svg, pt, X(pt.pc[pca.x]), Y(pt.pc[pca.y]), 5);
+    const sel = res.pts.find((p) => p.s.accession === state.species);
+    if (sel) svg.append(sv("text", { x: X(sel.pc[pca.x]) + 11, y: Y(sel.pc[pca.y]) + 4, class: "ink", "font-style": "italic", "pointer-events": "none" }, sel.s.organism));
+    box.replaceChildren(svg);
+  }
+
+  function draw3D(res) {
+    const box = $("pca-chart"), W = Math.max(300, box.clientWidth), H = Math.min(560, Math.max(340, W * 0.72));
+    box.classList.add("rot");
+    if (!pca.rot) pca.rot = { a: -0.6, b: 0.35 };
+    const ax = [pca.x, pca.y, pca.z];
+    const sc = ax.map((i) => Math.max(...res.pts.map((p) => Math.abs(p.pc[i]))) || 1);
+    const S = Math.max(...sc); // one scale for all three axes: distances stay comparable
+    const R = Math.min(W, H) * 0.42, cx = W / 2, cy = H / 2;
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": `3D PCA, PC${ax[0] + 1}, PC${ax[1] + 1}, PC${ax[2] + 1}` });
+    const draw = () => {
+      svg.replaceChildren();
+      const { a, b } = pca.rot, ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
+      const proj = ([x, y, z]) => { // rotate about vertical (a) then tilt (b); y-up
+        const x1 = ca * x + sa * z, z1 = -sa * x + ca * z;
+        const y2 = cb * y - sb * z1, z2 = sb * y + cb * z1;
+        return [cx + (x1 / S) * R, cy - (y2 / S) * R, z2 / S];
+      };
+      const pct = (i) => Math.round((100 * res.eig[i].val) / res.total);
+      [[1, 0, 0], [0, 1, 0], [0, 0, 1]].forEach((u, i) => {
+        const p0 = proj(u.map((v) => -v * S)), p1 = proj(u.map((v) => v * S));
+        svg.append(sv("line", { x1: p0[0], y1: p0[1], x2: p1[0], y2: p1[1], stroke: css("--axis"), "stroke-width": 1.5 }));
+        svg.append(sv("text", { x: p1[0], y: p1[1] - 4, "text-anchor": "middle", class: "ink2", "font-weight": "600" }, `PC${ax[i] + 1} (${pct(ax[i])} %)`));
+      });
+      const items = res.pts.map((pt) => ({ pt, q: proj(ax.map((i) => pt.pc[i])) })).sort((u, v) => u.q[2] - v.q[2]);
+      for (const { pt, q } of items) addMark(svg, pt, q[0], q[1], 4 + 1.6 * (q[2] + 1), 0.55 + 0.45 * ((q[2] + 1) / 2));
+    };
+    draw();
+    let drag = null;
+    svg.addEventListener("pointerdown", (e) => {
+      drag = { x: e.clientX, y: e.clientY, id: e.pointerId, captured: false };
+    });
+    svg.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!drag.captured) {
+        if (Math.abs(dx) + Math.abs(dy) < 3) return;
+        drag.captured = true; svg.setPointerCapture(drag.id); box.classList.add("dragging");
+      }
+      hideTip();
+      pca.rot.a += dx * 0.01; pca.rot.b = Math.max(-1.5, Math.min(1.5, pca.rot.b + dy * 0.01));
+      drag.x = e.clientX; drag.y = e.clientY;
+      draw();
+    });
+    const end = () => { drag = null; box.classList.remove("dragging"); };
+    svg.addEventListener("pointerup", end);
+    svg.addEventListener("pointercancel", end);
+    box.replaceChildren(svg);
+  }
+
+  function renderPcaLegend(res) {
+    const lg = $("pca-legend");
+    lg.replaceChildren();
+    const present = new Set(res.pts.map((p) => (pca.color === "group" ? p.s.group : p.s.invasion)));
+    const keys = (pca.color === "group" ? CLADES : INV).filter((k) => present.has(k));
+    for (const k of keys) {
+      const b = el("button", { type: "button", class: "lg" + (pca.hidden.has(k) ? " off" : ""), "aria-pressed": String(!pca.hidden.has(k)) });
+      const dot = el("span", { class: "key-dot" });
+      dot.style.background = css(pca.color === "group" ? `--cat-${CLADES.indexOf(k) + 1}` : INV_COLOR[k]);
+      const n = res.pts.filter((p) => (pca.color === "group" ? p.s.group : p.s.invasion) === k).length;
+      b.append(dot, `${k} (${n})`);
+      b.addEventListener("click", () => { pca.hidden.has(k) ? pca.hidden.delete(k) : pca.hidden.add(k); renderPCA(); });
+      lg.append(b);
+    }
+    const shapes = el("span", { class: "ink2" });
+    const mini = (st) => { const s = sv("svg", { width: 14, height: 14, viewBox: "0 0 14 14" }); s.append(sv("path", { d: shapePath(st, 7, 7.5, 4.5), fill: css("--ink-2") })); return s; };
+    lg.append(el("span", {}, "  shape:"));
+    for (const st of INV) { const s = el("span"); s.append(mini(st), st); lg.append(s); }
+    if (pca.centroids && pca.view === "2d") {
+      const s = el("span"), k = el("span", { class: "key-dash" });
+      s.append(k, "clade centroid, native (ring) → invasive (triangle)");
+      lg.append(s);
+    }
+    lg.append(el("span", { class: "hint" }, "Click a colour key to fade it."));
+  }
+
+  function renderPcaSide(res) {
+    // test
+    const box = $("pca-test");
+    box.replaceChildren();
+    const t = invasionTest(res);
+    if (!t) { box.append(el("p", { class: "test-sum" }, "No clade has both groups in this view.")); }
+    else {
+      const tb = el("table", { class: "test-table" }), hr = el("tr");
+      for (const h of ["Clade", "n inv / other", "Distance", "p"]) hr.append(el("th", {}, h));
+      tb.append(hr);
+      for (const st of t.strata) {
+        const tr = el("tr");
+        for (const v of [st.c, `${st.n1} / ${st.n0}`, fmt(st.d), fmtP(st.p)]) tr.append(el("td", {}, v));
+        tb.append(tr);
+      }
+      const tr = el("tr", { class: "total" });
+      for (const v of ["Combined", `${t.strata.reduce((a, s) => a + s.n1, 0)} / ${t.strata.reduce((a, s) => a + s.n0, 0)}`, fmt(t.T), fmtP(t.p)]) tr.append(el("td", {}, v));
+      tb.append(tr);
+      box.append(tb);
+      const verdict = t.p < 0.05 ? "Invasive species sit apart from the comparison species more than shuffled labels would (p < 0.05)."
+        : "No clear separation: invasive species are no further from the comparison species than shuffled labels.";
+      box.append(el("p", { class: "test-sum" }, `${verdict} Distance between group centroids in the full profile space` +
+        `${pca.set === "summary" ? " (in robust SD units)" : ""}; p from 4,999 within-clade shuffles. Labels are provisional.`));
+    }
+    // loadings
+    const lb = $("pca-load");
+    lb.replaceChildren();
+    const list = el("div", { class: "load-list" });
+    const axes = pca.view === "3d" ? [pca.x, pca.y, pca.z] : [pca.x, pca.y];
+    for (const i of axes) {
+      const vec = res.eig[i].vec, top = vec.map((v, j) => [j, v]).sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])).slice(0, 5);
+      const mx = Math.max(...vec.map(Math.abs));
+      list.append(el("div", { class: "pc" }, `PC${i + 1} · ${Math.round((100 * res.eig[i].val) / res.total)} % of variance`));
+      for (const [j, v] of top) {
+        const r = el("div", { class: "load-row" }), bar = el("div", { class: "bar" }), fill = el("span");
+        const w = (Math.abs(v) / mx) * 50;
+        fill.style.width = `${w}%`; fill.style.left = v >= 0 ? "50%" : `${50 - w}%`;
+        bar.append(fill);
+        r.append(el("span", { class: "nm", title: res.names[j] }, res.names[j]), bar, el("span", { class: "v" }, (v > 0 ? "+" : "") + v.toFixed(2)));
+        list.append(r);
+      }
+    }
+    lb.append(list);
+    // scree
+    const sb = $("pca-scree"), W = 300, H = 70, n = res.eig.length, bw = (W - 10) / n;
+    const svg = sv("svg", { viewBox: `0 0 ${W} ${H + 16}`, role: "img", "aria-label": "Variance explained per component" });
+    res.eig.forEach((e, i) => {
+      const f = e.val / res.total, h = f * H / Math.max(...res.eig.map((x) => x.val / res.total));
+      const on = axes.includes(i);
+      const r = sv("rect", { x: 5 + i * bw + 1, y: H - h, width: bw - 2, height: h, rx: 2, fill: on ? css("--series-1") : css("--hist") });
+      hoverable(r, () => [{ v: `${(100 * f).toFixed(1)} %`, l: `of variance, PC${i + 1}` }]);
+      svg.append(r, sv("text", { x: 5 + i * bw + bw / 2, y: H + 12, "text-anchor": "middle", class: "tick-label" }, `${i + 1}`));
+    });
+    const wrap = el("div", { class: "chart" });
+    wrap.append(svg);
+    sb.replaceChildren(el("p", { class: "chart-title" }, "Variance explained by each component (plotted ones in blue)"), wrap);
+  }
+
+  function initPCA() {
+    const cl = $("pca-clade");
+    cl.append(el("option", { value: "all" }, "All clades"));
+    for (const c of CLADES.filter((c) => c !== "control")) cl.append(el("option", { value: c }, `${c} only`));
+    cl.addEventListener("change", () => { pca.clade = cl.value; pca.hidden.clear(); renderPCA(); });
+    $("pca-set").addEventListener("change", (e) => { pca.set = e.target.value; renderPCA(); });
+    $("pca-center").addEventListener("change", (e) => { pca.center = e.target.checked; renderPCA(); });
+    $("pca-centroids").addEventListener("change", (e) => { pca.centroids = e.target.checked; renderPCA(); });
+    for (const [id, key] of [["pca-x", "x"], ["pca-y", "y"], ["pca-z", "z"]]) $(id).addEventListener("change", (e) => { pca[key] = +e.target.value; renderPCA(); });
+  }
+
   // ---------- boot ----------
   function renderAll() {
     renderTiles(state.data);
     renderTable();
     renderDist();
     renderEffect();
+    renderPCA();
     renderCov();
     renderHeat();
     renderValidation();
@@ -563,9 +995,10 @@
       sel.addEventListener("change", () => selectSpecies(sel.value, false));
       state.species = d.species[0].accession;
       sel.value = state.species;
+      initPCA();
       renderAll();
       let t;
-      window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderDist(); renderEffect(); renderCov(); }, 150); });
+      window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { renderDist(); renderEffect(); renderPCA(); renderCov(); }, 150); });
       window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", renderAll);
     })
     .catch((e) => {

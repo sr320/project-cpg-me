@@ -1,0 +1,112 @@
+# Species traits for the trait-space (PCA) view. One row per species name (matches manifest/species.tsv `species`).
+# invasion: invasive   = established outside the native range AND treated as invasive/harmful (e.g. listed in GISD, or a recognised invasive pest)
+#           introduced = established outside the native range (often via aquaculture or trade) but not commonly treated as invasive, or status debated
+#           native     = no established non-native populations known
+#           uncertain  = not enough information to assign
+# PROVISIONAL: drafted 2026-11-27 from general knowledge, not yet checked against GISD / WRiMS / NEMESIS. Verify before any inference.
+species	invasion	basis
+Acropora cervicornis	native
+Acropora millepora	native
+Acropora muricata	native
+Acropora palmata	native
+Cyphastrea microphthalma	native
+Desmophyllum pertusum	native
+Madrepora oculata	native
+Montipora capricornis	native
+Montipora foliosa	native
+Oculina patagonica	uncertain	long described as a Mediterranean introduction; native vs introduced origin is debated
+Orbicella faveolata	native
+Orbicella franksi	native
+Pavona decussata	native
+Pocillopora damicornis	native
+Pocillopora meandrina	native
+Pocillopora verrucosa	native
+Porites evermanni	native
+Porites harrisoni	native
+Porites lobata	native
+Porites lutea	native
+Stylophora pistillata	native
+Argopecten irradians	introduced	bay scallop; introduced to China for aquaculture
+Corbicula fluminea	invasive	Asian clam; GISD; invasive in Americas and Europe
+Crassostrea virginica	native	eastern oyster; native contrast with M. gigas
+Dreissena polymorpha	invasive	zebra mussel; GISD
+Dreissena rostriformis bugensis	invasive	quagga mussel; invasive in North America and western Europe
+Mactra antiquata	native
+Magallana angulata	introduced	Portuguese oyster; Asian origin, introduced to southern Europe
+Magallana gigas	invasive	Pacific oyster; GISD; spread from aquaculture worldwide
+Mercenaria mercenaria	introduced	hard clam; introduced to Europe for culture
+Mizuhopecten yessoensis	introduced	Yesso scallop; introduced to China for aquaculture
+Mya arenaria	introduced	softshell clam; historical introductions to Europe and the NE Pacific
+Mytilus californianus	native
+Mytilus coruscus	native
+Mytilus edulis	native
+Mytilus galloprovincialis	invasive	Mediterranean mussel; GISD; invasive in S Africa, Asia, NE Pacific
+Mytilus trossulus	native
+Ostrea edulis	native
+Pecten maximus	native
+Perna viridis	invasive	Asian green mussel; GISD; invasive in Caribbean and SE USA
+Pinctada imbricata	introduced	P. imbricata radiata is a Lessepsian invader in the Mediterranean; depends on which lineage was sequenced
+Potamilus streckersoni	native
+Ruditapes philippinarum	introduced	Manila clam; introduced widely for culture, invasive in some lagoons
+Saccostrea cuccullata	native
+Saccostrea echinata	native
+Sinanodonta woodiana	invasive	Chinese pond mussel; invasive in Europe
+Sinohyriopsis cumingii	native
+Solemya velum	native
+Ylistrum balloti	native
+Acyrthosiphon pisum	introduced	pea aphid; Palearctic, now cosmopolitan
+Adelges cooleyi	introduced	Cooley spruce gall adelgid; N American, introduced to Europe
+Aphis craccivora	introduced	cowpea aphid; cosmopolitan pest
+Aphis fabae	introduced	black bean aphid; cosmopolitan pest
+Aphis gossypii	invasive	cotton aphid; cosmopolitan pest, on many invasive-species lists
+Apolygus lucorum	native	green plant bug; Asian pest within native range
+Aquarius najas	native
+Bemisia tabaci	invasive	silverleaf whitefly; GISD (MEAM1/MED biotypes)
+Cimex lectularius	uncertain	bed bug; cosmopolitan human-associated, not usually classed by range
+Cinara cedri	introduced	cedar aphid; spread with ornamental cedars
+Cyrpoptus belfragei	native	Fulgoridae; native to US, not invasive
+Daktulosphaira vitifoliae	invasive	grape phylloxera; N American, invasive in Europe and worldwide
+Diuraphis noxia	invasive	Russian wheat aphid; invasive in S Africa and the Americas
+Gerris buenoi	native
+Halyomorpha halys	invasive	brown marmorated stink bug; invasive in N America and Europe
+Homalodisca vitripennis	invasive	glassy-winged sharpshooter; invasive in California and Pacific islands
+Kerria lacca	native	lac insect
+Laodelphax striatellus	native	small brown planthopper; native Eurasian rice pest, not listed as invasive
+Lycorma delicatula	invasive	spotted lanternfly; invasive in Korea, Japan, USA
+Macrosiphum euphorbiae	introduced	potato aphid; N American, introduced to Europe
+Macrosteles quadrilineatus	native	aster leafhopper
+Melanaphis sacchari	invasive	sugarcane aphid; invaded US sorghum from 2013
+Metopolophium dirhodum	introduced	rose-grain aphid; Palearctic, introduced to the Americas and Australasia
+Myzus persicae	invasive	green peach aphid; cosmopolitan pest, on many invasive-species lists
+Nesidiocoris tenuis	introduced	predatory mirid; spread and released as biocontrol, also a crop pest
+Nezara viridula	invasive	southern green stink bug; cosmopolitan invasive pest
+Nilaparvata lugens	native	brown planthopper; migratory pest within native Asian range
+Parthenolecanium corni	introduced	European fruit lecanium; cosmopolitan
+Planococcus citri	invasive	citrus mealybug; cosmopolitan invasive pest
+Ranatra chinensis	native
+Rhodnius prolixus	native	kissing bug
+Rhopalosiphum maidis	introduced	corn leaf aphid; cosmopolitan
+Rhopalosiphum padi	introduced	bird cherry-oat aphid; cosmopolitan
+Rhynocoris fuscipes	native
+Semiaphis heraclei	native
+Sipha flava	uncertain	yellow sugarcane aphid; American, introduced to Hawaii and elsewhere
+Sogatella furcifera	native	white-backed planthopper; migratory pest within native Asian range
+Uroleucon formosanum	native
+Acanthaster planci	native	crown-of-thorns; outbreaks within native range, not invasive
+Asterias amurensis	invasive	northern Pacific sea star; GISD; invasive in Australia
+Asterias rubens	native
+Patiria miniata	native
+Aplidium turbinatum	native
+Ascidia mentula	native
+Ascidiella aspersa	invasive	invasive in N America, Australia, S America
+Botryllus schlosseri	invasive	golden star tunicate; cosmopolitan fouling invader
+Ciona intestinalis	invasive	GISD; fouling invader
+Ciona robusta	invasive	widely introduced fouling species (formerly C. intestinalis type A)
+Clavelina lepadiformis	introduced	introduced to NE America and S Africa
+Corella eumyota	invasive	southern hemisphere species invading European coasts
+Halocynthia roretzi	native
+Phallusia mammillata	native
+Styela clava	invasive	clubbed tunicate; GISD
+Thalia democratica	native	pelagic salp
+Apis mellifera	introduced	control; managed worldwide
+Drosophila melanogaster	introduced	control; cosmopolitan

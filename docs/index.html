@@ -58,6 +58,78 @@
     </section>
   </div>
 
+  <section class="card" aria-labelledby="h-pca" id="pca-card">
+    <div class="card-head">
+      <h2 id="h-pca">Trait space: how species differ in CpG O/E</h2>
+      <div class="controls">
+        <div class="seg" role="radiogroup" aria-label="2D or 3D" id="pca-view-seg"></div>
+      </div>
+    </div>
+    <div class="explain">
+      <p>Each point is a species, placed by a principal component analysis (PCA) of its CpG O/E
+        profile. Species close together have similar methylation landscapes. Shape shows
+        invasion status, colour shows clade or status. Pick any two (or three) components to move
+        through the space; click a point to open its distribution above.</p>
+    </div>
+    <div class="pca-controls">
+      <label>Profile <select id="pca-set">
+        <option value="summary">Distribution summary (12 statistics)</option>
+        <option value="shape">Full distribution shape (80 bins)</option>
+        <option value="goslim">GO Slim term shifts (72 terms)</option>
+      </select></label>
+      <label>Feature <span class="seg" role="radiogroup" aria-label="Feature" id="pca-feat-seg"></span></label>
+      <label>Fit on <select id="pca-clade"></select></label>
+      <label class="check"><input type="checkbox" id="pca-center"> Remove clade means</label>
+      <label>Colour <span class="seg" role="radiogroup" aria-label="Colour by" id="pca-color-seg"></span></label>
+      <label>X <select id="pca-x"></select></label>
+      <label>Y <select id="pca-y"></select></label>
+      <label id="pca-z-wrap">Z <select id="pca-z"></select></label>
+      <label class="check"><input type="checkbox" id="pca-centroids" checked> Clade centroids</label>
+    </div>
+    <div class="pca-grid">
+      <div>
+        <div class="chart" id="pca-chart"></div>
+        <div class="legend" id="pca-legend"></div>
+        <p class="note" id="pca-note"></p>
+      </div>
+      <div class="pca-side">
+        <h3>Do invasive species stand apart?</h3>
+        <div class="controls"><span class="seg" role="radiogroup" aria-label="Comparison" id="pca-cmp-seg"></span></div>
+        <div id="pca-test"></div>
+        <h3>What drives the axes</h3>
+        <div id="pca-load"></div>
+        <div id="pca-scree"></div>
+      </div>
+    </div>
+    <details class="explain">
+      <summary>How this was done, and the caveats</summary>
+      <ul>
+        <li><strong>Profiles.</strong> <em>Distribution summary</em>: median, mean, the two
+          mixture modes (mean, SD, share), Ashman's D, log ΔBIC, GpC O/E median and the
+          housekeeping vs inducible effect, each scaled by its median and MAD and clipped at ±3, so a degenerate mixture fit (a "mode" of one gene) cannot dominate. <em>Full shape</em>:
+          the share of genes in each of the 80 CpG O/E bins. <em>GO Slim</em>: each term's median
+          shift against other genes (missing terms set to 0). Shape and GO Slim are not rescaled.</li>
+        <li><strong>Fit.</strong> PCA is fitted on focal species only. Controls and the
+          <em>Lycorma</em> transcriptome check are projected onto the same axes (hollow marks).
+          Transcriptome species have CDS only, so they drop out of gene-body views.</li>
+        <li><strong>Remove clade means.</strong> Subtracts each clade's average before the PCA, so
+          the axes describe variation <em>within</em> clades. Use it to look past the large
+          coral / bivalve / insect / tunicate differences.</li>
+        <li><strong>Test.</strong> Invasive and comparison species are compared within each
+          clade in the full profile space (all components, not just the two plotted): the
+          distance between their centroids, combined across clades weighted by
+          n<sub>a</sub>n<sub>b</sub>/(n<sub>a</sub>+n<sub>b</sub>). The p-value comes from 4,999
+          shuffles of the labels <em>within</em> clades, so clade differences cannot create a
+          signal. It does not control relatedness inside a clade (e.g. many aphids), and
+          invasion depends on opportunity as well as biology.</li>
+        <li><strong>Invasion labels are provisional</strong> (<code>manifest/traits.tsv</code>):
+          drafted from general knowledge and not yet checked against GISD, WRiMS or NEMESIS.
+          "Introduced" marks species established outside their range but not usually called
+          invasive (often aquaculture or cosmopolitan pests). Hover a point for the basis.</li>
+      </ul>
+    </details>
+  </section>
+
   <section class="card" aria-labelledby="h-cov" id="cov-card" hidden>
     <div class="card-head">
       <h2 id="h-cov">Does the gap survive GC content and gene length?</h2>

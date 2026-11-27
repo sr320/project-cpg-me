@@ -6,6 +6,7 @@ Usage:  uv run python analysis/build_dashboard.py [--results results] [--out doc
 
 Only summaries go into the JSON (fits, binned histograms, GO Slim statistics, validation
 statistics, covariate check), so the page stays small and no sequence data is published.
+Provisional trait labels (invasion status) are read from manifest/traits.tsv.
 The covariate check is read from analysis/covariate_check.tsv and covariate_check_wgbs.tsv
 (written by analysis/covariate_check.py) when they exist.
 """
@@ -35,6 +36,16 @@ def manifest(path: Path) -> dict[str, dict]:
     with open(path) as fh:
         rows = csv.DictReader((l for l in fh if not l.startswith("#")), delimiter="\t")
         return {r["accession"]: r for r in rows if r.get("accession")}
+
+
+def traits(path: Path) -> dict[str, dict]:
+    """manifest/traits.tsv keyed by species name (provisional invasion status)."""
+    if not path.exists():
+        return {}
+    with open(path) as fh:
+        rows = csv.DictReader((l for l in fh if not l.startswith("#")), delimiter="\t")
+        return {r["species"]: {"invasion": r["invasion"], "invasion_basis": r.get("basis") or ""}
+                for r in rows if r.get("species")}
 
 
 def histograms(features_tsv: Path) -> dict[str, list[int]]:
@@ -210,6 +221,7 @@ def main() -> None:
     ap.add_argument("--results", type=Path, default=Path("results"))
     ap.add_argument("--manifest", type=Path, default=Path("manifest/species.tsv"))
     ap.add_argument("--out", type=Path, default=Path("docs/data/dashboard.json"))
+    ap.add_argument("--traits", type=Path, default=Path("manifest/traits.tsv"))
     ap.add_argument("--covariates", type=Path, default=Path("analysis/covariate_check.tsv"))
     ap.add_argument("--merge", action="store_true",
                     help="keep species in the existing --out that are not in --results")
@@ -235,6 +247,9 @@ def main() -> None:
         s.pop("covariate", None)
         s.pop("covariate_wgbs", None)
     n_cov = add_covariates(species, a.covariates)
+    tr = traits(a.traits)
+    for s in species:
+        s.update(tr.get(s["organism"], {"invasion": "uncertain", "invasion_basis": "not in traits.tsv"}))
     try:
         commit = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True,
                                 text=True, check=True).stdout.strip()
