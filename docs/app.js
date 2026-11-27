@@ -466,7 +466,20 @@
     const spIdx = [...new Set(g.cells.map((c) => c[1]))].sort((a, b) => a - b);
     const species = spIdx.map((i) => d.species[i]);
     const lim = 0.3, color = divergingScale();
-    const cellW = 44, cellH = 15, labelW = 300, headH = 110;
+    // Size the label column to the longest term name (with its bold [HK]/[IND] tag).
+    const probe = sv("svg", { width: 0, height: 0 });
+    probe.style.position = "absolute";
+    $("heat-chart").append(probe);
+    const longest = Math.max(...g.terms.map((t) => {
+      const tag = t.class === "housekeeping" ? "  [HK]" : t.class === "inducible" ? "  [IND]" : "";
+      const lab = sv("text", { class: tag ? "ink" : "ink2" });
+      lab.append(sv("tspan", {}, t.name));
+      if (tag) lab.append(sv("tspan", { "font-weight": "600" }, tag));
+      probe.append(lab);
+      return lab.getComputedTextLength();
+    }));
+    probe.remove();
+    const cellW = 44, cellH = 15, labelW = Math.ceil(longest) + 16, headH = 110;
     const W = labelW + cellW * species.length + 8, H = headH + cellH * g.terms.length + 4;
     const svg = sv("svg", { viewBox: `0 0 ${W} ${H}`, width: W, height: H, role: "img",
       "aria-label": "GO Slim term by species heatmap of median CpG O/E shift" });
