@@ -114,15 +114,16 @@ is zero coordination, not throughput.
 - **Same environment everywhere.** One locked conda/pixi environment (Linux x86-64 and
   macOS arm64), so laptops and Raven produce identical numbers. A test fixture (one small
   genome with known output) runs on each machine before it contributes.
-- **Division of labour.** Participating machines (decided 2026-11-23): hete, chlo, raven and
-  klone, one shard each (`manifest/machines.tsv`, `--shard k/4`).
-  - hete, chlo, klone: fetch plus CpG O/E plus mixture fit for standard-size genomes. klone
-    (UW Hyak) runs through SLURM and needs Duo 2FA, so its jobs are submitted by hand.
-  - Raven: large genomes (some bivalves and Hemiptera are multi-Gb), eggNOG-mapper,
-    OrthoFinder, any transcriptome assembly, and the final merge.
-- **Collecting results.** Each machine rsyncs `results/<accession>/` to Gannet (decided
-  2026-11-23; path in `manifest/machines.tsv`). Raven builds the merged tables from there.
-  Outputs are small enough that the merged tables can also be versioned as release assets.
+- **Division of labour.** The plan (2026-11-23) was one shard each on hete, chlo, raven and
+  klone. In practice (2026-11-28) Raven does everything (`manifest/machines.tsv`): Phase 2
+  runs as eight parallel shards on Raven (`scripts/run_phase2.sh`, `--shard k/8`; more
+  shards hit NCBI rate limits), followed by BUSCO, eggNOG-mapper (`scripts/annotate_all.sh`),
+  and later OrthoFinder and the merge. hete and chlo did not resolve and klone needs Duo 2FA.
+  Sharding still lets another machine join later without coordination.
+- **Collecting results.** Results stay on Raven (`~/github/project-cpg-me/results`), which
+  builds the merged tables. Analysis and dashboard builds on the Mac copy what they need with
+  scp or tar over ssh (rsync to Raven hangs). The planned Gannet sync is not used. Outputs
+  are small enough that the merged tables can also be versioned as release assets.
 - **Status.** `cpgme status` compares manifest against the shared results directory and
   prints what is done, missing, or stale.
 
@@ -202,8 +203,8 @@ Settled:
   (`scripts/annotate_all.sh`). hete and chlo did not resolve, Gannet refused the SSH key and
   klone needs Duo 2FA, so none could be driven unattended. Results live on Raven under
   `~/github/project-cpg-me/results` (data/ is a symlink to shared storage) and are copied to
-  the Mac with scp or tar over ssh (rsync to Raven hangs). The Gannet sync in section 5 and
-  the four-shard split in `manifest/machines.tsv` are not in use.
+  the Mac with scp or tar over ssh (rsync to Raven hangs). Section 5 and
+  `manifest/machines.tsv` describe this setup.
 - Phase 1 genome manifest (2026-11-26): `cpgme candidates` lists every current annotated
   NCBI assembly in Scleractinia, Bivalvia, Hemiptera, Tunicata and Asteroidea, one per
   species (manifest/candidates.tsv, 113 species). Inclusion: BUSCO metazoa_odb10 completeness

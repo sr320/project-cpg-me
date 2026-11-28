@@ -1,8 +1,11 @@
-# Machines that contribute results. Each runs: uv run cpgme run-shard --shard <shard>
-# Run `uv run pytest -q` on a machine before it contributes. Results sync to Gannet (merged_results below).
-# merged_results: gannet:<path TBD>/project-cpg-me/results/
+# Machines that contribute results (revised 2026-11-28). All compute so far ran on Raven:
+#   scripts/run_phase2.sh [N]   runs cpgme run-shard --shard k/N for k = 1..N in parallel (default 8)
+#   scripts/annotate_all.sh     eggNOG-mapper + GO Slim for rows without goslim_test.json
+# Run `uv run pytest -q` on a machine before it contributes. Results stay on Raven
+# (~/github/project-cpg-me/results) and are copied to other machines with scp or tar over ssh
+# (rsync to Raven hangs). Gannet is not used.
 machine	shard	roles	notes
-hete	1/4	standard genomes
-chlo	2/4	standard genomes
-raven	3/4	standard genomes; large genomes (multi-Gb); eggNOG-mapper; OrthoFinder; final merge	eggNOG DB at /home/shared/16TB_HDD_01/sr320/eggnog-data/emapperdb-5.0.2
-klone	4/4	standard genomes; batch jobs via SLURM	UW Hyak; Duo 2FA, so jobs are submitted by hand
+raven	1/8 .. 8/8	all rows; large genomes (multi-Gb); BUSCO; eggNOG-mapper; OrthoFinder; final merge	eggNOG DB at /home/shared/16TB_HDD_01/sr320/eggnog-data/emapperdb-5.0.2; BUSCO via singularity (busco_v5.8.2.sif); data/ is a symlink to /home/shared/16TB_HDD_01/sr320/cpgme-data
+hete	-	not used	hostname did not resolve (2026-11-26)
+chlo	-	not used	hostname did not resolve (2026-11-26)
+klone	-	not used	UW Hyak; Duo 2FA, so jobs can only be submitted by hand
