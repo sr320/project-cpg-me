@@ -223,3 +223,63 @@ Open:
    manifest yet; their transcriptomes would need symbiont filtering.
 3. Remaining gaps (no TSA, or TSA below BUSCO 0.80): unannotated genome assemblies would need
    gene prediction, which is out of scope for now.
+
+## 12. Results to date
+
+### Functional annotation, all species (2026-11-27)
+
+`cpgme annotate` (eggNOG-mapper 2.1.13, eggNOG DB 5.0.2) ran on Raven for the 87 manifest
+rows not covered by the pilot (`scripts/annotate_all.sh`, about 7-10 min per species, no
+failures), so all 106 rows now have a GO Slim test. A median of 45 % of genes per species
+get a GO Slim term (24-66 %; lowest in *Mytilus coruscus*).
+
+Housekeeping vs inducible GO Slim genes, focal species (one-sided Mann-Whitney; a gap means
+housekeeping genes have significantly lower CpG O/E, p < 0.05). rb = median rank-biserial
+correlation, below zero when housekeeping genes are lower:
+
+| Group | Gene body: gap / species | rb | CDS: gap / species | rb |
+|---|---|---|---|---|
+| Bivalves | 26 / 26 | −0.38 | 28 / 28 | −0.47 |
+| Corals | 21 / 21 | −0.39 | 21 / 21 | −0.30 |
+| Hemiptera | 31 / 36 | −0.34 | 31 / 38 | −0.21 |
+| Tunicates | 11 / 11 | −0.36 | 12 / 12 | −0.19 |
+| Sea stars | 4 / 4 | −0.22 | 4 / 4 | −0.24 |
+| All | 93 / 98 | | 96 / 103 | |
+
+- The 2015 coral pattern holds in every species of four groups. All exceptions are Hemiptera.
+- No gene-body gap: the delphacids *Laodelphax* and *Nilaparvata*, the mirid *Nesidiocoris*,
+  and the scale insects *Parthenolecanium* and *Planococcus* (rb +0.36, a reversed gap).
+  For CDS, also *Aquarius* and the transcriptome rows *Cyrpoptus* and *Sogatella*.
+- Controls: *Apis mellifera* has a gap (gene body −0.39); *Drosophila melanogaster* has none
+  (+0.12), as expected.
+
+### GC content and gene length (2026-11-27)
+
+`analysis/covariate_check.py` on all 106 rows (206 species × feature rows; the 38 rows from
+the pilot reproduce exactly). CpG O/E is adjusted for GC and length over all genes, and the
+housekeeping vs inducible test is repeated on the residuals.
+
+| Group | Gene body: gap kept / gap before | share of raw gap retained | CDS: kept / before | retained |
+|---|---|---|---|---|
+| Bivalves | 26 / 26 | 0.95 | 28 / 28 | 1.01 |
+| Corals | 21 / 21 | 0.79 | 21 / 21 | 0.79 |
+| Hemiptera | 30 / 31 | 0.36 | 26 / 31 | 0.22 |
+| Tunicates | 11 / 11 | 0.61 | 10 / 12 | 0.40 |
+| Sea stars | 4 / 4 | 1.05 | 4 / 4 | 0.83 |
+| All | 92 / 93 | | 89 / 96 | |
+
+(Retained: median adjusted / raw difference between classes.)
+
+- Gene body: the gap survives in all but *Apolygus lucorum*, whose raw gap is tiny (−0.08).
+- CDS: lost in five Hemiptera (*Laodelphax*, *Apolygus*, *Ranatra*, *Cimex*, *Adelges*) and
+  two colonial tunicates (*Botryllus*, *Aplidium*), all with small raw gaps (−0.05 to −0.20).
+- In Hemiptera and tunicates the adjustment removes more of the gap. As in *Apis*, where
+  housekeeping genes are AT-rich and WGBS shows they are still far more methylated, this
+  is expected if methylation itself has lowered GC; it is not evidence against methylation.
+- GpC O/E composition control: small housekeeping-lower GpC gaps reach significance in 61 of
+  98 gene-body and 30 of 103 CDS tests because each species has thousands of genes, but
+  they are much weaker than the CpG gaps (largest in coral gene bodies, median −0.13 vs
+  −0.39 for CpG) and often reversed in Hemiptera, tunicates and sea stars.
+- Expression breadth is still not included.
+
+Outputs: `analysis/covariate_check.tsv`, `covariate_check_wgbs.tsv`, and the dashboard.
