@@ -194,10 +194,16 @@ results/      gitignored; synced to shared storage
 
 Settled:
 - Hemiptera is the insect group, with Diptera as negative control.
-- Merged results live on Gannet (2026-11-23). Exact path still to be filled in
-  `manifest/machines.tsv`.
-- Participating machines are hete, chlo, raven and klone (2026-11-23): four shards, with
-  large genomes, eggNOG-mapper, OrthoFinder and the merge on Raven.
+- Merged results were to live on Gannet (2026-11-23); superseded by the Raven setup in the
+  next entry.
+- Machines (2026-11-23, revised 2026-11-28): the plan was four shards on hete, chlo, raven
+  and klone. In practice everything ran on Raven: the Phase 1 BUSCO scoring, Phase 2 (all
+  106 rows, eight parallel shards with `scripts/run_phase2.sh`) and eggNOG-mapper
+  (`scripts/annotate_all.sh`). hete and chlo did not resolve, Gannet refused the SSH key and
+  klone needs Duo 2FA, so none could be driven unattended. Results live on Raven under
+  `~/github/project-cpg-me/results` (data/ is a symlink to shared storage) and are copied to
+  the Mac with scp or tar over ssh (rsync to Raven hangs). The Gannet sync in section 5 and
+  the four-shard split in `manifest/machines.tsv` are not in use.
 - Phase 1 genome manifest (2026-11-26): `cpgme candidates` lists every current annotated
   NCBI assembly in Scleractinia, Bivalvia, Hemiptera, Tunicata and Asteroidea, one per
   species (manifest/candidates.tsv, 113 species). Inclusion: BUSCO metazoa_odb10 completeness
